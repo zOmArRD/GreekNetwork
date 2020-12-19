@@ -35,27 +35,29 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin\events;
+namespace zOmArRD\plugin\addons;
 
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent as PJE;
-use pocketmine\utils\TextFormat as TE;
-use zOmArRD\plugin\config\Settings;
-use zOmArRD\plugin\utils\PlayerUtils;
+use zOmArRD\plugin\events\PlayerListener;
+use zOmArRD\plugin\events\WorldListener;
+use zOmArRD\plugin\GreekNetwork;
 
-class PlayerListener implements Listener
+/**
+ * Class Extensions
+ * @package zOmArRD\plugin\addons
+ */
+class Extensions
 {
-    public function onPJE(PJE $e) : void
+    public function loadExtensions(): void
     {
-        $player = $e->getPlayer();
-        $name = $player->getName();
+        $this->registerListener();
+    }
 
-        /** Necessary when player join */
-        PlayerUtils::onPlayerSpawn($player);
-        PlayerUtils::onPJE($player);
+    public function registerListener(): void
+    {
+        $plugin = GreekNetwork::getInstance()->getServer()->getPluginManager();
 
-
-        $e->setJoinMessage(TE::GREEN . $name . Settings::$joinMessage);
-
+        foreach ([new WorldListener(), new PlayerListener()] as $ev) {
+            $plugin->registerEvents($ev, GreekNetwork::getInstance());
+        }
     }
 }

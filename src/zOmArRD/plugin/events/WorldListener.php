@@ -37,11 +37,16 @@ declare(strict_types=1);
  */
 namespace zOmArRD\plugin\events;
 
+/** PocketMine-MP Class */
 use pocketmine\event\block\BlockBreakEvent as BBE;
+use pocketmine\event\block\BlockBurnEvent as BE;
 use pocketmine\event\block\BlockPlaceEvent as BPE;
 use pocketmine\event\block\LeavesDecayEvent as LDE;
 use pocketmine\event\Listener;
-use pocketmine\Server;
+
+
+/** GreekNetwork Class */
+use zOmArRD\plugin\GreekNetwork;
 
 
 class WorldListener implements Listener
@@ -51,7 +56,7 @@ class WorldListener implements Listener
      */
     public function onLDE(LDE $e): void
     {
-        if (Server::getInstance()->getDefaultLevel()) {
+        if (GreekNetwork::getInstance()->getServer()->getDefaultLevel()){
             $e->setCancelled(true);
         }
     }
@@ -77,4 +82,15 @@ class WorldListener implements Listener
             $e->setCancelled(true);
         }
     }
+
+    /**
+     * @param BE $e
+     */
+    public function onBE(BE $e) : void
+    {
+        if (GreekNetwork::getInstance()->getServer()->getDefaultLevel()){
+            $e->setCancelled(true);
+        }
+    }
+
 }
