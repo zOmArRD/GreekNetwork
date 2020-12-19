@@ -35,52 +35,11 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin;
+namespace zOmArRD\plugin\events;
 
-use pocketmine\plugin\PluginBase;
-use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat as TE;
-use zOmArRD\plugin\config\Settings;
+use pocketmine\event\Listener;
 
-class GreekNetwork extends PluginBase
+class PlayerListener implements Listener
 {
-    const CONFIG_VERSION = 1;
-
-    /** @var GreekNetwork|null */
-    public static $instance;
-
-    /**
-     * @return GreekNetwork|null
-     */
-    public static function getInstance() : ?GreekNetwork
-    {
-        return self::$instance;
-    }
-
-    public function onLoad()
-    {
-        self::$instance = $this;
-        $this->initConfig();
-    }
-
-    public function onEnable()
-    {
-        $logger = $this->getLogger();
-        $logger->info(Settings::$prefix . TE::GREEN . " loading Database");
-
-        $logger->info(Settings::$prefix . TE::GREEN ." System loaded");
-    }
-
-    public function initConfig(): void
-    {
-        $this->saveResource("config.yml");
-
-        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-        if ($cfg->get("config-version") !== GreekNetwork::CONFIG_VERSION) {
-            rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.yml.old");
-            $this->saveResource("config.yml");
-        }
-        Settings::init(new Config($this->getDataFolder() . "config.yml", Config::YAML));
-    }
 
 }

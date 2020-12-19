@@ -35,52 +35,46 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin;
+namespace zOmArRD\plugin\events;
 
-use pocketmine\plugin\PluginBase;
-use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat as TE;
-use zOmArRD\plugin\config\Settings;
+use pocketmine\event\block\BlockBreakEvent as BBE;
+use pocketmine\event\block\BlockPlaceEvent as BPE;
+use pocketmine\event\block\LeavesDecayEvent as LDE;
+use pocketmine\event\Listener;
+use pocketmine\Server;
 
-class GreekNetwork extends PluginBase
+
+class WorldListener implements Listener
 {
-    const CONFIG_VERSION = 1;
-
-    /** @var GreekNetwork|null */
-    public static $instance;
+    /**
+     * @param LDE $e
+     */
+    public function onLDE(LDE $e): void
+    {
+        if (Server::getInstance()->getDefaultLevel()) {
+            $e->setCancelled(true);
+        }
+    }
 
     /**
-     * @return GreekNetwork|null
+     * @param BBE $e
      */
-    public static function getInstance() : ?GreekNetwork
+    public function onBBE(BBE $e): void
     {
-        return self::$instance;
-    }
-
-    public function onLoad()
-    {
-        self::$instance = $this;
-        $this->initConfig();
-    }
-
-    public function onEnable()
-    {
-        $logger = $this->getLogger();
-        $logger->info(Settings::$prefix . TE::GREEN . " loading Database");
-
-        $logger->info(Settings::$prefix . TE::GREEN ." System loaded");
-    }
-
-    public function initConfig(): void
-    {
-        $this->saveResource("config.yml");
-
-        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-        if ($cfg->get("config-version") !== GreekNetwork::CONFIG_VERSION) {
-            rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.yml.old");
-            $this->saveResource("config.yml");
+        $player = $e->getPlayer();
+        if (!$player->isOp()) {
+            $e->setCancelled(true);
         }
-        Settings::init(new Config($this->getDataFolder() . "config.yml", Config::YAML));
     }
 
+    /**
+     * @param BPE $e
+     */
+    public function onBPE(BPE $e): void
+    {
+        $player = $e->getPlayer();
+        if (!$player->isOp()) {
+            $e->setCancelled(true);
+        }
+    }
 }

@@ -35,52 +35,35 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin;
+namespace zOmArRD\plugin\config;
 
-use pocketmine\plugin\PluginBase;
+use pocketmine\Server;
 use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat as TE;
-use zOmArRD\plugin\config\Settings;
 
-class GreekNetwork extends PluginBase
+/**
+ * Class Settings
+ * @package zOmArRD\plugin\config
+ */
+class Settings
 {
-    const CONFIG_VERSION = 1;
+    # ================== GENERALS CONFIG ==================
 
-    /** @var GreekNetwork|null */
-    public static $instance;
+    /** @var string */
+    public static $prefix = "";
+    public static $fallback_server = "";
 
-    /**
-     * @return GreekNetwork|null
-     */
-    public static function getInstance() : ?GreekNetwork
+    # ================== GENERALS CONFIG ==================
+
+    public final static function init(Config $config): void
     {
-        return self::$instance;
+        # ================== GENERALS CONFIG ==================
+
+        $general = $config->get("general");
+        self::$prefix = str_replace("&", "§", $general['prefix']);
+        self::$fallback_server = $general["fallback_server"];
+
+        # ================== GENERALS CONFIG ==================
+
+        Server::getInstance()->getLogger()->info(Settings::$prefix . " §aLoaded configuration into system.");
     }
-
-    public function onLoad()
-    {
-        self::$instance = $this;
-        $this->initConfig();
-    }
-
-    public function onEnable()
-    {
-        $logger = $this->getLogger();
-        $logger->info(Settings::$prefix . TE::GREEN . " loading Database");
-
-        $logger->info(Settings::$prefix . TE::GREEN ." System loaded");
-    }
-
-    public function initConfig(): void
-    {
-        $this->saveResource("config.yml");
-
-        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-        if ($cfg->get("config-version") !== GreekNetwork::CONFIG_VERSION) {
-            rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.yml.old");
-            $this->saveResource("config.yml");
-        }
-        Settings::init(new Config($this->getDataFolder() . "config.yml", Config::YAML));
-    }
-
 }

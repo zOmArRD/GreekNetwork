@@ -1,0 +1,17 @@
+###############################################
+#  This is a YML Archive. Precaution to edit  #
+###############################################
+---
+# Config version node. Unique Config name.
+# No reason for edit this.
+config-version: 1
+
+general:
+  # Plugin Prefix.
+  # For color you can use "§" or "&".
+  prefix: "§6§lGreek§8Network§r "
+
+  # Server where players go when restarting this server.
+  #  Don't use "§" or "&", if you use that, your really stupid
+  fallback_server: "lobby1"
+...
