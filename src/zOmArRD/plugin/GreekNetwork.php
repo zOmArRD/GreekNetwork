@@ -40,6 +40,7 @@ namespace zOmArRD\plugin;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TE;
+use zOmArRD\plugin\addons\Extensions;
 use zOmArRD\plugin\config\Settings;
 
 class GreekNetwork extends PluginBase
@@ -59,14 +60,27 @@ class GreekNetwork extends PluginBase
 
     public function onLoad()
     {
+        $logger = $this->getLogger();
+        $logger->info(Settings::$prefix . TE::GREEN . " loading Database");
+
         self::$instance = $this;
+
         $this->initConfig();
+
+        $this->getServer()->setAutoSave(false);
     }
 
     public function onEnable()
     {
         $logger = $this->getLogger();
-        $logger->info(Settings::$prefix . TE::GREEN . " loading Database");
+
+        /** @var  $extensions|Events/Task/More */
+        $extensions = new Extensions();
+        $extensions->loadExtensions();
+
+        $lobby = GreekNetwork::getInstance()->getServer()->getDefaultLevel();
+        $lobby->setTime(0);
+        $lobby->stopTime = true;
 
         $logger->info(Settings::$prefix . TE::GREEN ." System loaded");
     }
