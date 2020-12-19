@@ -12,6 +12,15 @@ general:
   prefix: "§6§lGreek§8Network§r "
 
   # Server where players go when restarting this server.
-  #  Don't use "§" or "&", if you use that, your really stupid
+  #  Don't use "§" or "&", if you use that, your really stupid.
   fallback_server: "lobby1"
+
+  # Message when player Join to the Server.
+  server_join_message: "Test"
+
+  # Coords where player Teleport to join.
+  x: 0
+  y: 100
+  z: 0
+  lobby: "world"
 ...
