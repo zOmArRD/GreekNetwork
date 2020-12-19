@@ -53,7 +53,7 @@ class GreekNetwork extends PluginBase
     /**
      * @return GreekNetwork|null
      */
-    public static function getInstance() : ?GreekNetwork
+    public static function getInstance(): ?GreekNetwork
     {
         return self::$instance;
     }
@@ -74,7 +74,7 @@ class GreekNetwork extends PluginBase
     {
         $logger = $this->getLogger();
 
-        /** @var  $extensions|Events/Task/More */
+        /** @var  $extensions |Events/Task/More */
         $extensions = new Extensions();
         $extensions->loadExtensions();
 
@@ -82,7 +82,7 @@ class GreekNetwork extends PluginBase
         $lobby->setTime(0);
         $lobby->stopTime = true;
 
-        $logger->info(Settings::$prefix . TE::GREEN ." System loaded");
+        $logger->info(Settings::$prefix . TE::GREEN . " System loaded");
     }
 
     public function initConfig(): void
