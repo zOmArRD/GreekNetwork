@@ -39,13 +39,18 @@ namespace zOmArRD\plugin\events;
 
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent as PJE;
+use pocketmine\event\player\PlayerQuitEvent as PQE;
 use pocketmine\utils\TextFormat as TE;
 use zOmArRD\plugin\config\Settings;
 use zOmArRD\plugin\utils\PlayerUtils;
 
 class PlayerListener implements Listener
 {
-    public function onPJE(PJE $e) : void
+    /**
+     * Function when Player join to the Server
+     * @param PJE $e
+     */
+    public function onPJE(PJE $e): void
     {
         $player = $e->getPlayer();
         $name = $player->getName();
@@ -54,8 +59,19 @@ class PlayerListener implements Listener
         PlayerUtils::onPlayerSpawn($player);
         PlayerUtils::onPJE($player);
 
-
-        $e->setJoinMessage(TE::GREEN . $name . Settings::$joinMessage);
+        $e->setJoinMessage(null);
+        $player->sendMessage(Settings::$playerNameColor . $name . " " . Settings::$joinMessage);
 
     }
+
+    /**
+     * @param PQE $e
+     */
+    public function onPLE(PQE $e): void
+    {
+        $player = $e->getPlayer();
+
+        $e->setQuitMessage(null);
+    }
+
 }
