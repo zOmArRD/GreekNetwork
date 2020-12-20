@@ -16,11 +16,16 @@ general:
   fallback_server: "lobby1"
 
   # Message when player Join to the Server.
-  server_join_message: "Test"
+  # For color you can use "§" or "&".
+  player_name_color: "§6"
+  server_join_message: "§aWelcome to the §l§6Greek§8Network"
 
   # Coords where player Teleport to join.
   x: 0
   y: 100
   z: 0
   lobby: "world"
+
+  # Discord WebHook Support.
+  webhook: "https://discord.com/api/webhooks/787154034346819615/SwY-fREJ9hacLkoatmeQQC94SqtjylR5vt--Is7-aMx9-sOVLBkvtfHjFARTKZGklhU3"
 ...
