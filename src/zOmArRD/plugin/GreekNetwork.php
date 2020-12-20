@@ -42,6 +42,7 @@ use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TE;
 use zOmArRD\plugin\addons\Extensions;
 use zOmArRD\plugin\config\Settings;
+use zOmArRD\plugin\utils\DiscordWebhook;
 
 class GreekNetwork extends PluginBase
 {
@@ -82,6 +83,7 @@ class GreekNetwork extends PluginBase
         $lobby->setTime(0);
         $lobby->stopTime = true;
 
+        DiscordWebhook::onEnable();
         $logger->info(Settings::$prefix . TE::GREEN . " System loaded");
     }
 

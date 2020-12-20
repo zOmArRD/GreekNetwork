@@ -51,8 +51,13 @@ class Settings
     /** @var string */
     public static $prefix = "";
     public static $fallback_server = "";
-    public static $joinMessage = "";
+
     public static $lobby = "";
+
+    public static $joinMessage = "";
+    public static $playerNameColor = "";
+
+    public static $discordWebHook = "";
 
     /** @var int  */
     public static $x = 0;
@@ -64,12 +69,19 @@ class Settings
     public final static function init(Config $config): void
     {
         # ================== GENERALS CONFIG ==================
-
         $general = $config->get("general");
         self::$prefix = str_replace("&", "§", $general['prefix']);
+
         self::$fallback_server = $general["fallback_server"];
-        self::$joinMessage = str_replace("&", "§", $general['server_join_message']);
+
         self::$lobby = $general['lobby'];
+        self::$playerNameColor = str_replace("&", "§", $general['player_name_color']);
+
+        self::$joinMessage = str_replace("&", "§", $general['server_join_message']);
+
+        self::$joinMessage = str_replace("&", "§", $general['webhook']);
+
+
         # ================== GENERALS CONFIG ==================
 
 
@@ -78,7 +90,6 @@ class Settings
         self::$y = $general['y'];
         self::$z = $general['z'];
         # ================== Player Config When Join ==================
-
 
         Server::getInstance()->getLogger()->info(Settings::$prefix . " §aLoaded configuration into system.");
     }
