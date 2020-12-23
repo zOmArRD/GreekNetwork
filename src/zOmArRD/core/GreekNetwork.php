@@ -35,62 +35,66 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin\events;
+namespace zOmArRD\core;
 
-/** PocketMine-MP Class */
-use pocketmine\event\block\BlockBreakEvent as BBE;
-use pocketmine\event\block\BlockBurnEvent as BE;
-use pocketmine\event\block\BlockPlaceEvent as BPE;
-use pocketmine\event\block\LeavesDecayEvent as LDE;
-use pocketmine\event\Listener;
+use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat as TE;
+use zOmArRD\core\addons\Extensions;
+use zOmArRD\core\config\Settings;
+use zOmArRD\core\utils\DiscordWebhook;
 
-
-/** GreekNetwork Class */
-use zOmArRD\plugin\GreekNetwork;
-
-
-class WorldListener implements Listener
+final class GreekNetwork extends PluginBase
 {
-    /**
-     * @param LDE $e
-     */
-    public function onLDE(LDE $e): void
-    {
-        if (GreekNetwork::getInstance()->getServer()->getDefaultLevel()){
-            $e->setCancelled(true);
-        }
-    }
+    const CONFIG_VERSION = 1;
+
+    /** @var GreekNetwork|null */
+    public static $instance;
 
     /**
-     * @param BBE $e
+     * @return GreekNetwork|null
      */
-    public function onBBE(BBE $e): void
+    public static function getInstance(): ?GreekNetwork
     {
-        $player = $e->getPlayer();
-        if (!$player->isOp()) {
-            $e->setCancelled(true);
-        }
+        return self::$instance;
     }
 
-    /**
-     * @param BPE $e
-     */
-    public function onBPE(BPE $e): void
+    public function onLoad()
     {
-        $player = $e->getPlayer();
-        if (!$player->isOp()) {
-            $e->setCancelled(true);
-        }
+        $logger = $this->getLogger();
+        $logger->info(Settings::$prefix . TE::GREEN . " loading Database");
+
+        self::$instance = $this;
+
+        $this->initConfig();
+
     }
 
-    /**
-     * @param BE $e
-     */
-    public function onBE(BE $e) : void
+    public function onEnable()
     {
-        if (GreekNetwork::getInstance()->getServer()->getDefaultLevel()){
-            $e->setCancelled(true);
-        }
+        $logger = $this->getLogger();
+
+        /** @var  $extensions |Events/Task/More */
+        $extensions = new Extensions();
+        $extensions->loadExtensions();
+
+        $lobby = GreekNetwork::getInstance()->getServer()->getDefaultLevel();
+        $lobby->setTime(0);
+        $lobby->stopTime = true;
+
+        DiscordWebhook::onEnable();
+        $logger->info(Settings::$prefix . TE::GREEN . " System loaded");
     }
 
+    public function initConfig(): void
+    {
+        $this->saveResource("config.yml");
+
+        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+        if ($cfg->get("config-version") !== GreekNetwork::CONFIG_VERSION) {
+            rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.yml.old");
+            $this->saveResource("config.yml");
+        }
+        Settings::init(new Config($this->getDataFolder() . "config.yml", Config::YAML));
+    }
 }

@@ -1,12 +1,12 @@
 <?php
 declare(strict_types = 1);
 
-namespace zOmArRD\plugin\web\discord\task;
+namespace zOmArRD\core\web\discord\task;
 
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
-use zOmArRD\plugin\web\discord\Message;
-use zOmArRD\plugin\web\discord\Webhook;
+use zOmArRD\core\web\discord\Message;
+use zOmArRD\core\web\discord\Webhook;
 
 class WebHookSend extends AsyncTask
 {

@@ -1,11 +1,11 @@
 <?php
-namespace zOmArRD\plugin\server;
+namespace zOmArRD\core\server;
 
 use EndGames\EndGamesDatabase\AsyncQueue;
 use EndGames\EndGamesDatabase\Database;
 use EndGames\EndGamesDatabase\SelectQuery;
-use zOmArRD\plugin\GreekNetwork;
-use zOmArRD\plugin\task\ServerSyncTask;
+use zOmArRD\core\GreekNetwork;
+use zOmArRD\core\task\ServerSyncTask;
 
 /**
  * Class ServerManager

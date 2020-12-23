@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace zOmArRD\plugin\server;
+namespace zOmArRD\core\server;
 
 use EndGames\EndGamesDatabase\AsyncQueue;
 use EndGames\EndGamesDatabase\SelectQuery;

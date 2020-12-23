@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace zOmArRD\plugin\utils;
+namespace zOmArRD\core\utils;
 
-use zOmArRD\plugin\GreekNetwork;
-use zOmArRD\plugin\web\discord\Embed;
-use zOmArRD\plugin\web\discord\Message;
-use zOmArRD\plugin\web\discord\Webhook;
+use zOmArRD\core\GreekNetwork;
+use zOmArRD\core\web\discord\Embed;
+use zOmArRD\core\web\discord\Message;
+use zOmArRD\core\web\discord\Webhook;
 
 class DiscordWebhook
 {

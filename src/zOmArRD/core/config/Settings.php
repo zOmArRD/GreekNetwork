@@ -35,68 +35,62 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin;
+namespace zOmArRD\core\config;
 
-use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\Player;
-use pocketmine\plugin\PluginBase;
+use pocketmine\Server;
 use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat as TE;
-use zOmArRD\plugin\addons\Extensions;
-use zOmArRD\plugin\config\Settings;
-use zOmArRD\plugin\utils\DiscordWebhook;
 
-final class GreekNetwork extends PluginBase
+/**
+ * Class Settings
+ * @package zOmArRD\core\config
+ */
+class Settings
 {
-    const CONFIG_VERSION = 1;
+    # ================== GENERALS CONFIG ==================
 
-    /** @var GreekNetwork|null */
-    public static $instance;
+    /** @var string */
+    public static $prefix = "";
+    public static $fallback_server = "";
 
-    /**
-     * @return GreekNetwork|null
-     */
-    public static function getInstance(): ?GreekNetwork
+    public static $lobby = "";
+
+    public static $joinMessage = "";
+    public static $playerNameColor = "";
+
+    public static $discordWebHook = "";
+
+    /** @var int  */
+    public static $x = 0;
+    public static $y = 0;
+    public static $z = 0;
+
+    # ================== GENERALS CONFIG ==================
+
+    public final static function init(Config $config): void
     {
-        return self::$instance;
-    }
+        # ================== GENERALS CONFIG ==================
+        $general = $config->get("general");
+        self::$prefix = str_replace("&", "§", $general['prefix']);
 
-    public function onLoad()
-    {
-        $logger = $this->getLogger();
-        $logger->info(Settings::$prefix . TE::GREEN . " loading Database");
+        self::$fallback_server = $general["fallback_server"];
 
-        self::$instance = $this;
+        self::$lobby = $general['lobby'];
+        self::$playerNameColor = str_replace("&", "§", $general['player_name_color']);
 
-        $this->initConfig();
+        self::$joinMessage = str_replace("&", "§", $general['server_join_message']);
 
-    }
+        self::$joinMessage = str_replace("&", "§", $general['webhook']);
 
-    public function onEnable()
-    {
-        $logger = $this->getLogger();
 
-        /** @var  $extensions |Events/Task/More */
-        $extensions = new Extensions();
-        $extensions->loadExtensions();
+        # ================== GENERALS CONFIG ==================
 
-        $lobby = GreekNetwork::getInstance()->getServer()->getDefaultLevel();
-        $lobby->setTime(0);
-        $lobby->stopTime = true;
 
-        DiscordWebhook::onEnable();
-        $logger->info(Settings::$prefix . TE::GREEN . " System loaded");
-    }
+        # ================== Player Config When Join ==================
+        self::$x = $general['x'];
+        self::$y = $general['y'];
+        self::$z = $general['z'];
+        # ================== Player Config When Join ==================
 
-    public function initConfig(): void
-    {
-        $this->saveResource("config.yml");
-
-        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-        if ($cfg->get("config-version") !== GreekNetwork::CONFIG_VERSION) {
-            rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.yml.old");
-            $this->saveResource("config.yml");
-        }
-        Settings::init(new Config($this->getDataFolder() . "config.yml", Config::YAML));
+        Server::getInstance()->getLogger()->info(Settings::$prefix . " §aLoaded configuration into system.");
     }
 }

@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: zOmArRD
@@ -35,85 +35,61 @@ declare(strict_types = 1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin\web\discord;
+namespace zOmArRD\plugin\events;
+
+/** PocketMine-MP Class */
+use pocketmine\event\block\BlockBreakEvent as BBE;
+use pocketmine\event\block\BlockBurnEvent as BE;
+use pocketmine\event\block\BlockPlaceEvent as BPE;
+use pocketmine\event\block\LeavesDecayEvent as LDE;
+use pocketmine\event\Listener;
+
+/** GreekNetwork Class */
+use zOmArRD\core\GreekNetwork;
 
 
-class Message implements \JsonSerializable
+class WorldListener implements Listener
 {
-    /** @var array */
-    protected $data = [];
-
     /**
-     * @param string $content
+     * @param LDE $e
      */
-    public function setContent(string $content): void
+    public function onLDE(LDE $e): void
     {
-        $this->data["content"] = $content;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getContent(): ?string
-    {
-        return $this->data["content"];
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getUsername(): ?string
-    {
-        return $this->data["username"];
-    }
-
-    /**
-     * @param string $username
-     */
-    public function setUsername(string $username): void
-    {
-        $this->data["username"] = $username;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getAvatarURL(): ?string
-    {
-        return $this->data["avatar_url"];
-    }
-
-    /**
-     * @param string $avatarURL
-     */
-    public function setAvatarURL(string $avatarURL): void
-    {
-        $this->data["avatar_url"] = $avatarURL;
-    }
-
-    /**
-     * @param Embed $embed
-     */
-    public function addEmbed(Embed $embed): void
-    {
-        if (!empty(($arr = $embed->asArray()))) {
-            $this->data["embeds"][] = $arr;
+        if (GreekNetwork::getInstance()->getServer()->getDefaultLevel()){
+            $e->setCancelled(true);
         }
     }
 
     /**
-     * @param bool $ttsEnabled
+     * @param BBE $e
      */
-    public function setTextToSpeech(bool $ttsEnabled): void
+    public function onBBE(BBE $e): void
     {
-        $this->data["tts"] = $ttsEnabled;
+        $player = $e->getPlayer();
+        if (!$player->isOp()) {
+            $e->setCancelled(true);
+        }
     }
 
     /**
-     * @return array|mixed
+     * @param BPE $e
      */
-    public function jsonSerialize()
+    public function onBPE(BPE $e): void
     {
-        return $this->data;
+        $player = $e->getPlayer();
+        if (!$player->isOp()) {
+            $e->setCancelled(true);
+        }
     }
+
+    /**
+     * @param BE $e
+     */
+    public function onBE(BE $e) : void
+    {
+        if (GreekNetwork::getInstance()->getServer()->getDefaultLevel()){
+            $e->setCancelled(true);
+        }
+    }
+
 }

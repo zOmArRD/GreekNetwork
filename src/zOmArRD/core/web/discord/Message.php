@@ -35,42 +35,85 @@ declare(strict_types = 1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin\web\discord;
+namespace zOmArRD\core\web\discord;
 
 
-use pocketmine\Server;
-use zOmArRD\plugin\web\discord\task\WebHookSend;
-
-class Webhook {
-    /** @var string */
-    protected $url;
+class Message implements \JsonSerializable
+{
+    /** @var array */
+    protected $data = [];
 
     /**
-     * Webhook constructor.
-     * @param string $url
+     * @param string $content
      */
-    public function __construct(string $url){
-        $this->url = $url;
+    public function setContent(string $content): void
+    {
+        $this->data["content"] = $content;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getURL(): string{
-        return $this->url;
+    public function getContent(): ?string
+    {
+        return $this->data["content"];
     }
 
     /**
-     * @return bool
+     * @return string|null
      */
-    public function isValid(): bool{
-        return filter_var($this->url, FILTER_VALIDATE_URL) !== false;
+    public function getUsername(): ?string
+    {
+        return $this->data["username"];
     }
 
     /**
-     * @param Message $message
+     * @param string $username
      */
-    public function send(Message $message): void{
-        Server::getInstance()->getAsyncPool()->submitTask(new WebHookSend($this, $message));
+    public function setUsername(string $username): void
+    {
+        $this->data["username"] = $username;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAvatarURL(): ?string
+    {
+        return $this->data["avatar_url"];
+    }
+
+    /**
+     * @param string $avatarURL
+     */
+    public function setAvatarURL(string $avatarURL): void
+    {
+        $this->data["avatar_url"] = $avatarURL;
+    }
+
+    /**
+     * @param Embed $embed
+     */
+    public function addEmbed(Embed $embed): void
+    {
+        if (!empty(($arr = $embed->asArray()))) {
+            $this->data["embeds"][] = $arr;
+        }
+    }
+
+    /**
+     * @param bool $ttsEnabled
+     */
+    public function setTextToSpeech(bool $ttsEnabled): void
+    {
+        $this->data["tts"] = $ttsEnabled;
+    }
+
+    /**
+     * @return array|mixed
+     */
+    public function jsonSerialize()
+    {
+        return $this->data;
     }
 }

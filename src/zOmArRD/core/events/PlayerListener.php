@@ -35,29 +35,43 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin\addons;
+namespace zOmArRD\core\events;
 
-use zOmArRD\plugin\events\PlayerListener;
-use zOmArRD\plugin\events\WorldListener;
-use zOmArRD\plugin\GreekNetwork;
+use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerJoinEvent as PJE;
+use pocketmine\event\player\PlayerQuitEvent as PQE;
+use pocketmine\utils\TextFormat as TE;
+use zOmArRD\core\config\Settings;
+use zOmArRD\core\utils\PlayerUtils;
 
-/**
- * Class Extensions
- * @package zOmArRD\plugin\addons
- */
-class Extensions
+class PlayerListener implements Listener
 {
-    public function loadExtensions(): void
+    /**
+     * Function when Player join to the Server
+     * @param PJE $e
+     */
+    public function onPJE(PJE $e): void
     {
-        $this->registerListener();
+        $player = $e->getPlayer();
+        $name = $player->getName();
+
+        /** Necessary when player join */
+        PlayerUtils::onPlayerSpawn($player);
+        PlayerUtils::onPJE($player);
+
+        $e->setJoinMessage(null);
+        $player->sendMessage(Settings::$playerNameColor . $name . " " . Settings::$joinMessage);
+
     }
 
-    public function registerListener(): void
+    /**
+     * @param PQE $e
+     */
+    public function onPLE(PQE $e): void
     {
-        $plugin = GreekNetwork::getInstance()->getServer()->getPluginManager();
+        $player = $e->getPlayer();
 
-        foreach ([new WorldListener(), new PlayerListener()] as $ev) {
-            $plugin->registerEvents($ev, GreekNetwork::getInstance());
-        }
+        $e->setQuitMessage(null);
     }
+
 }

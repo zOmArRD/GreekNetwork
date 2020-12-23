@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace zOmArRD\plugin\task;
+namespace zOmArRD\core\task;
 
 use pocketmine\scheduler\Task;
-use zOmArRD\plugin\server\ServerManager;
+use zOmArRD\core\server\ServerManager;
 
 class ServerSyncTask extends Task
 {

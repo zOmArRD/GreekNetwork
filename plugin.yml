@@ -1,6 +1,6 @@
 name: GreekNetwork
 version: 1.0.0
 author: zOmArRD
-main: zOmArRD\plugin\GreekNetwork
+main: zOmArRD\core\GreekNetwork
 api: 4.0.0
 description: GreekNetwork Core

@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: zOmArRD
@@ -35,43 +35,42 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin\events;
+namespace zOmArRD\core\web\discord;
 
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent as PJE;
-use pocketmine\event\player\PlayerQuitEvent as PQE;
-use pocketmine\utils\TextFormat as TE;
-use zOmArRD\plugin\config\Settings;
-use zOmArRD\plugin\utils\PlayerUtils;
 
-class PlayerListener implements Listener
-{
+use pocketmine\Server;
+use zOmArRD\core\web\discord\task\WebHookSend;
+
+class Webhook {
+    /** @var string */
+    protected $url;
+
     /**
-     * Function when Player join to the Server
-     * @param PJE $e
+     * Webhook constructor.
+     * @param string $url
      */
-    public function onPJE(PJE $e): void
-    {
-        $player = $e->getPlayer();
-        $name = $player->getName();
-
-        /** Necessary when player join */
-        PlayerUtils::onPlayerSpawn($player);
-        PlayerUtils::onPJE($player);
-
-        $e->setJoinMessage(null);
-        $player->sendMessage(Settings::$playerNameColor . $name . " " . Settings::$joinMessage);
-
+    public function __construct(string $url){
+        $this->url = $url;
     }
 
     /**
-     * @param PQE $e
+     * @return string
      */
-    public function onPLE(PQE $e): void
-    {
-        $player = $e->getPlayer();
-
-        $e->setQuitMessage(null);
+    public function getURL(): string{
+        return $this->url;
     }
 
+    /**
+     * @return bool
+     */
+    public function isValid(): bool{
+        return filter_var($this->url, FILTER_VALIDATE_URL) !== false;
+    }
+
+    /**
+     * @param Message $message
+     */
+    public function send(Message $message): void{
+        Server::getInstance()->getAsyncPool()->submitTask(new WebHookSend($this, $message));
+    }
 }

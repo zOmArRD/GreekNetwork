@@ -2,11 +2,11 @@
 declare(strict_types=1);
 
 
-namespace zOmArRD\plugin\server;
+namespace zOmArRD\core\server;
 
 /**
  * Class ServerGroup
- * @package zOmArRD\plugin\server
+ * @package zOmArRD\core\server
  */
 class ServerGroup
 {

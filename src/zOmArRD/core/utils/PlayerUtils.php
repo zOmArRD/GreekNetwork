@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace zOmArRD\plugin\utils;
+namespace zOmArRD\core\utils;
 
-use pocketmine\level\Position;
-use pocketmine\Player;
-use zOmArRD\plugin\config\Settings;
-use zOmArRD\plugin\GreekNetwork;
+use pocketmine\player\Player;
+use pocketmine\world\Position;
+use zOmArRD\core\config\Settings;
+use zOmArRD\core\GreekNetwork;
 
 class PlayerUtils
 {

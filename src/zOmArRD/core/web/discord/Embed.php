@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace zOmArRD\plugin\web\discord;
+namespace zOmArRD\core\web\discord;
 
 use DateTime;
 

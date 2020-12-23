@@ -35,62 +35,29 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin\config;
+namespace zOmArRD\core\addons;
 
-use pocketmine\Server;
-use pocketmine\utils\Config;
+use zOmArRD\core\events\PlayerListener;
+use zOmArRD\core\events\WorldListener;
+use zOmArRD\core\GreekNetwork;
 
 /**
- * Class Settings
- * @package zOmArRD\plugin\config
+ * Class Extensions
+ * @package zOmArRD\core\addons
  */
-class Settings
+class Extensions
 {
-    # ================== GENERALS CONFIG ==================
-
-    /** @var string */
-    public static $prefix = "";
-    public static $fallback_server = "";
-
-    public static $lobby = "";
-
-    public static $joinMessage = "";
-    public static $playerNameColor = "";
-
-    public static $discordWebHook = "";
-
-    /** @var int  */
-    public static $x = 0;
-    public static $y = 0;
-    public static $z = 0;
-
-    # ================== GENERALS CONFIG ==================
-
-    public final static function init(Config $config): void
+    public function loadExtensions(): void
     {
-        # ================== GENERALS CONFIG ==================
-        $general = $config->get("general");
-        self::$prefix = str_replace("&", "§", $general['prefix']);
+        $this->registerListener();
+    }
 
-        self::$fallback_server = $general["fallback_server"];
+    public function registerListener(): void
+    {
+        $plugin = GreekNetwork::getInstance()->getServer()->getPluginManager();
 
-        self::$lobby = $general['lobby'];
-        self::$playerNameColor = str_replace("&", "§", $general['player_name_color']);
-
-        self::$joinMessage = str_replace("&", "§", $general['server_join_message']);
-
-        self::$joinMessage = str_replace("&", "§", $general['webhook']);
-
-
-        # ================== GENERALS CONFIG ==================
-
-
-        # ================== Player Config When Join ==================
-        self::$x = $general['x'];
-        self::$y = $general['y'];
-        self::$z = $general['z'];
-        # ================== Player Config When Join ==================
-
-        Server::getInstance()->getLogger()->info(Settings::$prefix . " §aLoaded configuration into system.");
+        foreach ([new WorldListener(), new PlayerListener()] as $ev) {
+            $plugin->registerEvents($ev, GreekNetwork::getInstance());
+        }
     }
 }
