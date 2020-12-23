@@ -26,7 +26,7 @@ class Server
      * Server constructor.
      * @param $name
      * @param int $onlinePlayers
-     * @param bool $online
+     * @param false $online
      */
     public function __construct($name, $onlinePlayers = 0, $online = false)
     {
