@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace zOmArRD\core\web\discord\task;
 
 use pocketmine\scheduler\AsyncTask;
-use pocketmine\Server;
 use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\web\discord\Message;
 use zOmArRD\core\web\discord\Webhook;

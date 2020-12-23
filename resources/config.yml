@@ -21,9 +21,9 @@ general:
   server_join_message: "§aWelcome to the §l§6Greek§8Network"
 
   # Coords where player Teleport to join.
-  x: 0
-  y: 100
-  z: 0
+  x: 575
+  y: 69
+  z: 191
   lobby: "world"
 
   # Discord WebHook Support.

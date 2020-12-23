@@ -31,7 +31,7 @@ class DiscordWebhook
 
         $embed->setTitle("Greek Network");
         $embed->setColor(0x00FF00);
-        $embed->setDescription("Status: " . "**Online**" . $br2 . "Players: " . "**$players**" . $br2 . "greekhcf.ddns.net join now!");
+        $embed->setDescription("Esto es solo para fines de prueba" . $br2 . $br . "**Ignorar**");
         $msg->addEmbed($embed);
         $webHook->send($msg);
     }

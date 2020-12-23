@@ -19,8 +19,6 @@ class PlayerUtils
         /** Player Attributes */
         $player->setMaxHealth(1);
         $player->setHealth(1);
-        $player->setFood(20);
-        $player->setSaturation(20);
 
         /** Player inventory */
         $inventory = $player->getInventory();
@@ -31,6 +29,9 @@ class PlayerUtils
 
     }
 
+    /**
+     * @param Player $player
+     */
     public static function onPlayerSpawn(Player $player): void
     {
         /** Player SafeSpawn */
@@ -38,6 +39,6 @@ class PlayerUtils
         $y = Settings::$y;
         $z = Settings::$z;
         $level = Settings::$lobby;
-        $player->teleport(new Position(575, 69, 191, GreekNetwork::getInstance()->getServer()->getLevelByName($level)));
+        $player->teleport(new Position($x, $y, $z, GreekNetwork::getInstance()->getServer()->getWorldManager()->getWorldByName($level)));
     }
 }
