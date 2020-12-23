@@ -22,12 +22,6 @@ class Server
     /** @var bool $online */
     private $online = false;
 
-    /**
-     * Server constructor.
-     * @param $name
-     * @param int $onlinePlayers
-     * @param false $online
-     */
     public function __construct($name, $onlinePlayers = 0, $online = false)
     {
         $this->name = $name;
