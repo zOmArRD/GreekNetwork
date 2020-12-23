@@ -35,7 +35,7 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\plugin\events;
+namespace zOmArRD\core\events;
 
 /** PocketMine-MP Class */
 use pocketmine\event\block\BlockBreakEvent as BBE;
