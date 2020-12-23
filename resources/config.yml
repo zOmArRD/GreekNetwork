@@ -28,4 +28,13 @@ general:
 
   # Discord WebHook Support.
   webhook: "https://discord.com/api/webhooks/787154034346819615/SwY-fREJ9hacLkoatmeQQC94SqtjylR5vt--Is7-aMx9-sOVLBkvtfHjFARTKZGklhU3"
+
+  # Mysql Credentials
+  # Host (IP) - Username (Default = root) - Password (Password of DataBase)
+  # Database (Mysql Table) - Server (Name of this Server)
+  host: 127.0.0.1
+  username: root
+  password: "YourPasswordHere"
+  database: "MysqlDtabase"
+  server: lobby1
 ...
