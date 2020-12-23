@@ -72,12 +72,12 @@ final class GreekNetwork extends PluginBase
 
     public function onEnable()
     {
-        $logger = $this->getLogger();
+        $logger = $this->getServer()->getLogger();
 
         $extensions = new Extensions();
         $extensions->loadExtensions();
 
-        $lobby = GreekNetwork::getInstance()->getServer()->getDefaultLevel();
+        $lobby = GreekNetwork::getInstance()->getServer()->getWorldManager()->getDefaultWorld();
         $lobby->setTime(0);
         $lobby->stopTime = true;
 
