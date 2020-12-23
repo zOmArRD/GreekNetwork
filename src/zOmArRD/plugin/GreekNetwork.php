@@ -37,6 +37,8 @@ declare(strict_types=1);
  */
 namespace zOmArRD\plugin;
 
+use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TE;
@@ -44,7 +46,7 @@ use zOmArRD\plugin\addons\Extensions;
 use zOmArRD\plugin\config\Settings;
 use zOmArRD\plugin\utils\DiscordWebhook;
 
-class GreekNetwork extends PluginBase
+final class GreekNetwork extends PluginBase
 {
     const CONFIG_VERSION = 1;
 
@@ -68,7 +70,6 @@ class GreekNetwork extends PluginBase
 
         $this->initConfig();
 
-        $this->getServer()->setAutoSave(false);
     }
 
     public function onEnable()
@@ -98,5 +99,4 @@ class GreekNetwork extends PluginBase
         }
         Settings::init(new Config($this->getDataFolder() . "config.yml", Config::YAML));
     }
-
 }
