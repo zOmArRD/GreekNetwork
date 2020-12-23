@@ -5,6 +5,7 @@ namespace zOmArRD\core\web\discord\task;
 
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
+use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\web\discord\Message;
 use zOmArRD\core\web\discord\Webhook;
 
@@ -26,8 +27,7 @@ class WebHookSend extends AsyncTask
         $this->message = $message;
     }
 
-
-    public function onRun()
+    public function onRun(): void
     {
         $ch = curl_init($this->webhook->getURL());
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($this->message));
@@ -40,14 +40,12 @@ class WebHookSend extends AsyncTask
         curl_close($ch);
     }
 
-    /**
-     * @param Server $server
-     */
-    public function onCompletion(Server $server)
+    public function onCompletion(): void
     {
         $response = $this->getResult();
         if ($response !== "") {
-            $server->getLogger()->error("[DiscordWebhookAPI] Got error: " . $response);
+            $server = GreekNetwork::getInstance()->getServer()->getLogger();
+            $server->error("[DiscordWebhookAPI] Got error: " . $response);
         }
     }
 }
