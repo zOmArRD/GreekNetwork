@@ -74,7 +74,7 @@ final class GreekNetwork extends PluginBase
     {
         $logger = $this->getLogger();
 
-        /** @var  $extensions |Events/Task/More */
+        /** @var  $extensions */
         $extensions = new Extensions();
         $extensions->loadExtensions();
 
