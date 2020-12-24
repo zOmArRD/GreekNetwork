@@ -39,6 +39,7 @@ namespace zOmArRD\core\config;
 
 use pocketmine\Server;
 use pocketmine\utils\Config;
+use zOmArRD\core\GreekNetwork;
 
 /**
  * Class Settings
@@ -55,32 +56,37 @@ class Settings
     public static $lobby = "";
 
     public static $joinMessage = "";
-    public static $playerNameColor = "";
 
-    public static $discordWebHook = "";
+    /** @var int */
+    public static int $x = 50;
+    public static int $y = 100;
+    public static int $z = 50;
 
-    /** @var int  */
-    public static $x = 0;
-    public static $y = 0;
-    public static $z = 0;
-
-    # ================== GENERALS CONFIG ==================
-
+    /**
+     * @param Config $config
+     */
     public final static function init(Config $config): void
     {
+        # ================== LANGUAGE CONFIG ==================
+        if (!is_dir(self::getDataFolder())) {
+            @mkdir(self::getDataFolder());
+        }
+        if (!is_dir(self::getDataFolder() . "languages")) {
+            @mkdir(self::getDataFolder() . "languages");
+        }
+        if (!is_file(self::getDataFolder() . "languages/en_US.yml")) {
+            GreekNetwork::getInstance()->saveResource("languages/en_US.yml");
+        }
+        # ================== LANGUAGE CONFIG ==================
+
+
         # ================== GENERALS CONFIG ==================
         $general = $config->get("general");
         self::$prefix = str_replace("&", "§", $general['prefix']);
 
         self::$fallback_server = $general["fallback_server"];
 
-        self::$lobby = $general['lobby'];
-        self::$playerNameColor = str_replace("&", "§", $general['player_name_color']);
-
         self::$joinMessage = str_replace("&", "§", $general['server_join_message']);
-
-        self::$joinMessage = str_replace("&", "§", $general['webhook']);
-
 
         # ================== GENERALS CONFIG ==================
 
@@ -89,8 +95,25 @@ class Settings
         self::$x = $general['x'];
         self::$y = $general['y'];
         self::$z = $general['z'];
+        self::$lobby = $general['lobby'];
         # ================== Player Config When Join ==================
 
         Server::getInstance()->getLogger()->info(Settings::$prefix . " §aLoaded configuration into system.");
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDataFolder(): string
+    {
+        return GreekNetwork::getInstance()->getDataFolder();
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDataPath(): string
+    {
+        return GreekNetwork::getInstance()->getServer()->getDataPath();
     }
 }

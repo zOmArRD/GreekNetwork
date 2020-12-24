@@ -37,11 +37,15 @@ declare(strict_types=1);
  */
 namespace zOmArRD\core\events;
 
+use Cassandra\Set;
+use pocketmine\event\entity\EntityDamageEvent as EDE;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent as PJE;
 use pocketmine\event\player\PlayerQuitEvent as PQE;
-use pocketmine\utils\TextFormat as TE;
+use pocketmine\player\Player;
+use pocketmine\world\Position;
 use zOmArRD\core\config\Settings;
+use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\utils\PlayerUtils;
 
 class PlayerListener implements Listener
@@ -56,12 +60,11 @@ class PlayerListener implements Listener
         $name = $player->getName();
 
         /** Necessary when player join */
-        PlayerUtils::onPlayerSpawn($player);
         PlayerUtils::onPJE($player);
+        $player->teleport(new Position(Settings::$y, Settings::$y, Settings::$z, GreekNetwork::getInstance()->getServer()->getWorldManager()->getWorldByName(Settings::$lobby)));
 
         $e->setJoinMessage(null);
-        $player->sendMessage(Settings::$playerNameColor . $name . " " . Settings::$joinMessage);
-
+        $player->sendMessage(Settings::$joinMessage);
     }
 
     /**
@@ -70,8 +73,15 @@ class PlayerListener implements Listener
     public function onPLE(PQE $e): void
     {
         $player = $e->getPlayer();
-
         $e->setQuitMessage(null);
+        //PlayerUtils::getSafeSpawn($player);
     }
 
+    /**
+     * @param EDE $e
+     */
+    public function on(EDE $e): void
+    {
+        $e->cancel();
+    }
 }

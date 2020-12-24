@@ -12,7 +12,7 @@ class ServerSyncTask extends Task
     /**
      * @inheritDoc
      */
-    public function onRun(int $currentTick)
+    public function onRun(): void
     {
         foreach (ServerManager::getServers() as $server) {
             $server->sync();

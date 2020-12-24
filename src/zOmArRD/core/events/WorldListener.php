@@ -55,8 +55,8 @@ class WorldListener implements Listener
      */
     public function onLDE(LDE $e): void
     {
-        if (GreekNetwork::getInstance()->getServer()->getDefaultLevel()){
-            $e->setCancelled(true);
+        if (GreekNetwork::getInstance()->getServer()->getWorldManager()->getDefaultWorld()) {
+            $e->cancel();
         }
     }
 
@@ -66,8 +66,8 @@ class WorldListener implements Listener
     public function onBBE(BBE $e): void
     {
         $player = $e->getPlayer();
-        if (!$player->isOp()) {
-            $e->setCancelled(true);
+        if (!$player->hasPermission("greek.build")){
+            $e->cancel();
         }
     }
 
@@ -77,8 +77,8 @@ class WorldListener implements Listener
     public function onBPE(BPE $e): void
     {
         $player = $e->getPlayer();
-        if (!$player->isOp()) {
-            $e->setCancelled(true);
+        if (!$player->hasPermission("greek.build")){
+            $e->cancel();
         }
     }
 
@@ -87,8 +87,8 @@ class WorldListener implements Listener
      */
     public function onBE(BE $e) : void
     {
-        if (GreekNetwork::getInstance()->getServer()->getDefaultLevel()){
-            $e->setCancelled(true);
+        if (GreekNetwork::getInstance()->getServer()->getWorldManager()->getDefaultWorld()) {
+            $e->cancel();
         }
     }
 
