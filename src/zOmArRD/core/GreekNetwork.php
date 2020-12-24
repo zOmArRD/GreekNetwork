@@ -61,7 +61,7 @@ final class GreekNetwork extends PluginBase
 
     public function onLoad()
     {
-        $logger = $this->getLogger();
+        $logger = $this->getServer()->getLogger();
         $logger->info(Settings::$prefix . TE::GREEN . " loading Database");
 
         self::$instance = $this;
@@ -81,7 +81,7 @@ final class GreekNetwork extends PluginBase
         $lobby->setTime(0);
         $lobby->stopTime = true;
 
-        DiscordWebhook::onEnable();
+        //DiscordWebhook::onEnable();
         $logger->info(Settings::$prefix . TE::GREEN . " System loaded");
     }
 
