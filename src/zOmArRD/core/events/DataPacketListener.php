@@ -35,50 +35,24 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\addons;
+namespace zOmArRD\core\events;
 
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
-use pocketmine\utils\Config;
-use zOmArRD\core\events\DataPacketListener;
-use zOmArRD\core\events\PlayerListener;
-use zOmArRD\core\events\WorldListener;
-use zOmArRD\core\GreekNetwork;
+use pocketmine\event\Listener;
+use pocketmine\event\server\DataPacketReceiveEvent as DPRE;
+use pocketmine\network\mcpe\protocol\LoginPacket as LP;
+use pocketmine\network\mcpe\protocol\ProtocolInfo as PI;
+use zOmArRD\core\addons\Extensions;
 
-/**
- * Class Extensions
- * @package zOmArRD\core\addons
- */
-class Extensions
+class DataPacketListener implements Listener
 {
-
-    public $acceptProtocol = [];
-
-    public function loadExtensions(): void
+    public function onDPRE(DPRE $ev)
     {
-        $this->registerListener();
-        $this->registerProtocols();
-    }
-
-    public function registerListener(): void
-    {
-        $plugin = GreekNetwork::getInstance()->getServer()->getPluginManager();
-
-        foreach ([new WorldListener(), new PlayerListener(), new DataPacketListener()] as $ev) {
-            $plugin->registerEvents($ev, GreekNetwork::getInstance());
-        }
-    }
-
-    public function registerProtocols(): void
-    {
-        $dataFolder = GreekNetwork::getInstance()->getDataFolder();
-        @mkdir($dataFolder);
-        $this->acceptProtocol = (new Config($dataFolder. "accept.yml", Config::YAML))->get("accept-protocol");
-
-        if ($this->acceptProtocol === false || empty($this->acceptProtocol)){
-            $this->acceptProtocol[] = ProtocolInfo::CURRENT_PROTOCOL;
-            $config = new Config($dataFolder . "accept.yml", Config::YAML);
-            $config->set("accept-protocol", [ProtocolInfo::CURRENT_PROTOCOL]);
-            $config->save();
+        $pk = $ev->getPacket();
+        $extension = new Extensions();
+        if ($pk instanceof LP) {
+            if (in_array($pk->protocol, $extension->acceptProtocol)) {
+                $pk->protocol = PI::CURRENT_PROTOCOL;
+            }
         }
     }
 }
