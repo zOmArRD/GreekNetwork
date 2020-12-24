@@ -6,6 +6,13 @@
 # No reason for edit this.
 config-version: 1
 
+# Supported languages (English (en_US), Czech (cs_CZ), German (de_DE), Japanese (ja_JP), Russian (ru_RU), Chinese (zh_CN), Indonesian (ina_IND))
+# Language is automatically chosen from minecraft. However 'lang' in config is default language e.g for players with Spanish lang.
+lang: 'en_US'
+
+# Set it to true, and GreekNetwork won't automatically select player's language, instead of this will use lang placed in config
+forceDefaultLang: false
+
 general:
   # Plugin Prefix.
   # For color you can use "§" or "&".
@@ -15,19 +22,16 @@ general:
   #  Don't use "§" or "&", if you use that, your really stupid.
   fallback_server: "lobby1"
 
-  # Message when player Join to the Server.
+  # Send message to player when join to the server.
   # For color you can use "§" or "&".
-  player_name_color: "§6"
+  # If you want not send a message put "" only
   server_join_message: "§aWelcome to the §l§6Greek§8Network"
 
   # Coords where player Teleport to join.
   x: 575
   y: 69
   z: 191
-  lobby: "world"
-
-  # Discord WebHook Support.
-  webhook: "https://discord.com/api/webhooks/787154034346819615/SwY-fREJ9hacLkoatmeQQC94SqtjylR5vt--Is7-aMx9-sOVLBkvtfHjFARTKZGklhU3"
+  lobby: "hub"
 
   # Mysql Credentials
   # Host (IP) - Username (Default = root) - Password (Password of DataBase)
