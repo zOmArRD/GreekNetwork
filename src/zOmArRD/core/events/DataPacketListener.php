@@ -39,20 +39,34 @@ namespace zOmArRD\core\events;
 
 use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketReceiveEvent as DPRE;
-use pocketmine\network\mcpe\protocol\LoginPacket as LP;
-use pocketmine\network\mcpe\protocol\ProtocolInfo as PI;
-use zOmArRD\core\addons\Extensions;
+use pocketmine\network\mcpe\protocol\EmotePacket;
+use pocketmine\network\mcpe\protocol\LoginPacket;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
+use pocketmine\Server;
+use zOmArRD\core\utils\LanguageManager;
 
 class DataPacketListener implements Listener
 {
-    public function onDPRE(DPRE $ev)
+    /**
+     * @param DPRE $ev
+     */
+    public function DPRE(DPRE $ev): void
     {
         $pk = $ev->getPacket();
-        $extension = new Extensions();
-        if ($pk instanceof LP) {
-            if (in_array($pk->protocol, $extension->acceptProtocol)) {
-                $pk->protocol = PI::CURRENT_PROTOCOL;
+
+        if ($pk instanceof LoginPacket) {
+            LanguageManager::$players[$pk->username] = $pk->locale;
+
+            if ($pk->protocol != ProtocolInfo::CURRENT_PROTOCOL and in_array($pk->protocol, [407, 418, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425])) {
+                $pk->protocol = ProtocolInfo::CURRENT_PROTOCOL;
             }
+        }
+
+
+
+        if ($pk instanceof EmotePacket) {
+            $emoteId = $pk->getEmoteId();
+            Server::getInstance()->broadcastPacket($ev->getPlayer()->getViewers(), EmotePacket::create($ev->getPlayer()->getId(), $emoteId, 1 << 0));
         }
     }
 }

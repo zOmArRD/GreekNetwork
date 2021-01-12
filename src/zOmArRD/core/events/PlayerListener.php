@@ -37,13 +37,16 @@ declare(strict_types=1);
  */
 namespace zOmArRD\core\events;
 
-use Cassandra\Set;
 use pocketmine\event\entity\EntityDamageEvent as EDE;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerChatEvent;
+use pocketmine\event\player\PlayerExhaustEvent as PEE;
 use pocketmine\event\player\PlayerJoinEvent as PJE;
 use pocketmine\event\player\PlayerQuitEvent as PQE;
-use pocketmine\player\Player;
-use pocketmine\world\Position;
+use pocketmine\level\Position;
+use pocketmine\network\mcpe\protocol\ScriptCustomEventPacket;
+use pocketmine\Player;
+use pocketmine\utils\Binary;
 use zOmArRD\core\config\Settings;
 use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\utils\PlayerUtils;
@@ -61,7 +64,7 @@ class PlayerListener implements Listener
 
         /** Necessary when player join */
         PlayerUtils::onPJE($player);
-        $player->teleport(new Position(Settings::$y, Settings::$y, Settings::$z, GreekNetwork::getInstance()->getServer()->getWorldManager()->getWorldByName(Settings::$lobby)));
+        $player->teleport(new Position(Settings::$x, Settings::$y, Settings::$z, GreekNetwork::getInstance()->getServer()->getLevelByName(Settings::$lobby)));
 
         $e->setJoinMessage(null);
         $player->sendMessage(Settings::$joinMessage);
@@ -82,6 +85,27 @@ class PlayerListener implements Listener
      */
     public function on(EDE $e): void
     {
-        $e->cancel();
+        $e->setCancelled(true);
+    }
+
+    public function onPEE(PEE $e): void
+    {
+        $e->setCancelled(true);
+    }
+
+    public function player(PlayerChatEvent $event){
+        if ($event->getMessage() === "hcf"){
+            $event->getPlayer();
+            self::transferPlayer($event->getPlayer(), "hcf");
+        }
+    }
+
+    public static function transferPlayer(Player $player, String $server): bool
+    {
+        $pk = new ScriptCustomEventPacket();
+        $pk->eventName = "bungeecord:main";
+        $pk->eventData = Binary::writeShort(strlen("Connect")) . "Connect" . Binary::writeShort(strlen($server)) . $server;
+        $player->sendDataPacket($pk);
+        return true;
     }
 }

@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace zOmArRD\core\utils;
 
-use pocketmine\player\Player;
-use pocketmine\world\Position;
-use zOmArRD\core\config\Settings;
-use zOmArRD\core\GreekNetwork;
+
+use pocketmine\Player;
 
 class PlayerUtils
 {
@@ -19,6 +17,7 @@ class PlayerUtils
         /** Player Attributes */
         $player->setMaxHealth(1);
         $player->setHealth(1);
+        $player->setGamemode(Player::ADVENTURE);
 
         /** Player inventory */
         $inventory = $player->getInventory();
