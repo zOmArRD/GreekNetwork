@@ -38,11 +38,10 @@ declare(strict_types=1);
 namespace zOmArRD\core;
 
 use pocketmine\plugin\PluginBase;
-use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TE;
 use zOmArRD\core\addons\Extensions;
+use zOmArRD\core\command\GreekCommand;
 use zOmArRD\core\config\Settings;
-use zOmArRD\core\utils\DiscordWebhook;
 
 final class GreekNetwork extends PluginBase
 {
@@ -50,6 +49,9 @@ final class GreekNetwork extends PluginBase
 
     /** @var GreekNetwork|null */
     public static $instance;
+
+    /** @var array $commands */
+    public $commands = [];
 
     /**
      * @return GreekNetwork|null
@@ -59,41 +61,36 @@ final class GreekNetwork extends PluginBase
         return self::$instance;
     }
 
-    public function onLoad()
+    public function onLoad(): void
     {
         $logger = $this->getServer()->getLogger();
         $logger->info(Settings::$prefix . TE::GREEN . " loading Database");
 
         self::$instance = $this;
 
-        $this->initConfig();
-
+        Extensions::initConfig();
     }
 
-    public function onEnable()
+    public function onEnable(): void
     {
         $logger = $this->getServer()->getLogger();
+
+        $this->commands = [
+          "greek" => $cmd = new GreekCommand()
+        ];
+
+        foreach ($this->commands as $command) {
+            $this->getServer()->getCommandMap()->register("greek", $command);
+        }
 
         $extensions = new Extensions();
         $extensions->loadExtensions();
 
-        $lobby = GreekNetwork::getInstance()->getServer()->getWorldManager()->getDefaultWorld();
+        $lobby = GreekNetwork::getInstance()->getServer()->getDefaultLevel();
         $lobby->setTime(0);
         $lobby->stopTime = true;
 
         //DiscordWebhook::onEnable();
         $logger->info(Settings::$prefix . TE::GREEN . " System loaded");
-    }
-
-    public function initConfig(): void
-    {
-        $this->saveResource("config.yml");
-
-        $cfg = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-        if ($cfg->get("config-version") !== GreekNetwork::CONFIG_VERSION) {
-            rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.yml.old");
-            $this->saveResource("config.yml");
-        }
-        Settings::init(new Config($this->getDataFolder() . "config.yml", Config::YAML));
     }
 }

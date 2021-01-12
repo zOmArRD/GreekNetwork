@@ -2,5 +2,5 @@ name: GreekNetwork
 version: 1.0.0
 author: zOmArRD
 main: zOmArRD\core\GreekNetwork
-api: 4.0.0
+api: 3.0.0
 description: GreekNetwork Core
