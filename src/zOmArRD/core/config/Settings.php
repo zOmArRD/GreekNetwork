@@ -58,9 +58,10 @@ class Settings
     public static $joinMessage = "";
 
     /** @var int */
-    public static int $x = 50;
-    public static int $y = 100;
-    public static int $z = 50;
+    public static $x = 50;
+    public static $y = 100;
+    public static $z = 50;
+    public static $gamemode = 2;
 
     /**
      * @param Config $config
@@ -96,6 +97,7 @@ class Settings
         self::$y = $general['y'];
         self::$z = $general['z'];
         self::$lobby = $general['lobby'];
+        self::$gamemode = $general['gamemode'];
         # ================== Player Config When Join ==================
 
         Server::getInstance()->getLogger()->info(Settings::$prefix . " §aLoaded configuration into system.");

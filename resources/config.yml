@@ -27,10 +27,17 @@ general:
   # If you want not send a message put "" only
   server_join_message: "§aWelcome to the §l§6Greek§8Network"
 
+  # Set gamemode player when Join
+  # 2 = Adventure
+  # 3 = Specter
+  # 1 = Creative
+  # 0 = Survival
+  gamemode: 2
+
   # Coords where player Teleport to join.
-  x: 575
-  y: 69
-  z: 191
+  x: 1
+  y: 89
+  z: -3
   lobby: "hub"
 
   # Mysql Credentials
