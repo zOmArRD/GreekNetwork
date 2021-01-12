@@ -39,6 +39,7 @@ namespace zOmArRD\core\addons;
 
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\utils\Config;
+use zOmArRD\core\config\Settings;
 use zOmArRD\core\events\DataPacketListener;
 use zOmArRD\core\events\PlayerListener;
 use zOmArRD\core\events\WorldListener;
@@ -50,13 +51,9 @@ use zOmArRD\core\GreekNetwork;
  */
 class Extensions
 {
-
-    public $acceptProtocol = [];
-
     public function loadExtensions(): void
     {
         $this->registerListener();
-        $this->registerProtocols();
     }
 
     public function registerListener(): void
@@ -68,17 +65,18 @@ class Extensions
         }
     }
 
-    public function registerProtocols(): void
+    public static function initConfig(): void
     {
-        $dataFolder = GreekNetwork::getInstance()->getDataFolder();
-        @mkdir($dataFolder);
-        $this->acceptProtocol = (new Config($dataFolder. "accept.yml", Config::YAML))->get("accept-protocol");
+        $plugin = GreekNetwork::getInstance();
 
-        if ($this->acceptProtocol === false || empty($this->acceptProtocol)){
-            $this->acceptProtocol[] = ProtocolInfo::CURRENT_PROTOCOL;
-            $config = new Config($dataFolder . "accept.yml", Config::YAML);
-            $config->set("accept-protocol", [ProtocolInfo::CURRENT_PROTOCOL]);
-            $config->save();
+        $plugin->saveResource("config.yml");
+
+        $cfg = new Config($plugin->getDataFolder() . "config.yml", Config::YAML);
+        if ($cfg->get("config-version") !== GreekNetwork::CONFIG_VERSION) {
+            rename($plugin->getDataFolder() . "config.yml", $plugin->getDataFolder() . "config.yml.old");
+            $plugin->saveResource("config.yml");
         }
+
+        Settings::init(new Config($plugin->getDataFolder() . "config.yml", Config::YAML));
     }
 }
