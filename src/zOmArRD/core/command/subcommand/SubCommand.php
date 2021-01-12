@@ -35,67 +35,19 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\events;
+namespace zOmArRD\core\command\subcommand;
 
-/** PocketMine-MP Class */
-use pocketmine\event\block\BlockBreakEvent as BBE;
-use pocketmine\event\block\BlockBurnEvent as BE;
-use pocketmine\event\block\BlockPlaceEvent as BPE;
-use pocketmine\event\block\LeavesDecayEvent as LDE;
-use pocketmine\event\entity\EntityExplodeEvent as EEE;
-use pocketmine\event\Listener;
+use pocketmine\command\CommandSender;
 
-/** GreekNetwork Class */
-use zOmArRD\core\GreekNetwork;
-
-
-class WorldListener implements Listener
+interface SubCommand
 {
     /**
-     * @param LDE $e
+     * @api
+     *
+     * @param CommandSender $sender
+     * @param array $args
+     * @param string $name
+     * @return mixed
      */
-    public function onLDE(LDE $e): void
-    {
-        if (GreekNetwork::getInstance()->getServer()->getDefaultLevel()) {
-            $e->setCancelled(true);
-        }
-    }
-
-    /**
-     * @param BBE $e
-     */
-    public function onBBE(BBE $e): void
-    {
-        $player = $e->getPlayer();
-        if (!$player->hasPermission("greek.build")) {
-            $e->setCancelled(true);
-        }
-    }
-
-    /**
-     * @param BPE $e
-     */
-    public function onBPE(BPE $e): void
-    {
-        $player = $e->getPlayer();
-        if (!$player->hasPermission("greek.build")) {
-            $e->setCancelled(true);
-        }
-    }
-
-    /**
-     * @param BE $e
-     */
-    public function onBE(BE $e): void
-    {
-        $e->setCancelled(true);
-    }
-
-    /**
-     * @param EEE $e
-     */
-    public function onEEE(EEE $e): void
-    {
-        $e->setCancelled(true);
-    }
+    public function executeSub(CommandSender $sender, array $args, string $name);
 }
