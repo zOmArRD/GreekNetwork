@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace zOmArRD\core\web\discord\task;
 
 use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
 use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\web\discord\Message;
 use zOmArRD\core\web\discord\Webhook;
@@ -39,7 +40,7 @@ class WebHookSend extends AsyncTask
         curl_close($ch);
     }
 
-    public function onCompletion(): void
+    public function onCompletion(Server $server): void
     {
         $response = $this->getResult();
         if ($response !== "") {
