@@ -37,13 +37,14 @@ declare(strict_types=1);
  */
 namespace zOmArRD\core\addons;
 
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
+use pocketmine\Player;
 use pocketmine\utils\Config;
 use zOmArRD\core\config\Settings;
 use zOmArRD\core\events\DataPacketListener;
 use zOmArRD\core\events\PlayerListener;
 use zOmArRD\core\events\WorldListener;
 use zOmArRD\core\GreekNetwork;
+use zOmArRD\core\task\GreekTask;
 
 /**
  * Class Extensions
@@ -54,6 +55,7 @@ class Extensions
     public function loadExtensions(): void
     {
         $this->registerListener();
+        //$this->registerTask();
     }
 
     public function registerListener(): void
@@ -65,11 +67,17 @@ class Extensions
         }
     }
 
+    public function registerTask(): void
+    {
+        $plugin = GreekNetwork::getInstance()->getScheduler();
+        $plugin->scheduleRepeatingTask(new GreekTask(), 20);
+    }
+
     public static function initConfig(): void
     {
         $plugin = GreekNetwork::getInstance();
 
-        $plugin->saveResource("config.yml");
+        foreach (['config.yml'] as $strings) $plugin->saveResource($strings);
 
         $cfg = new Config($plugin->getDataFolder() . "config.yml", Config::YAML);
         if ($cfg->get("config-version") !== GreekNetwork::CONFIG_VERSION) {
@@ -78,5 +86,30 @@ class Extensions
         }
 
         Settings::init(new Config($plugin->getDataFolder() . "config.yml", Config::YAML));
+
+    }
+
+    /**
+     * @param Player $player
+     */
+    public function sendScoreboard(Player $player): void
+    {
+
+    }
+
+    /**
+     * @return BungeeExtension
+     */
+    public static function BungeeCord(): BungeeExtension
+    {
+        return new BungeeExtension();
+    }
+
+    /**
+     * @return ScoreExtension
+     */
+    public static function Scoreboard(): ScoreExtension
+    {
+        return new ScoreExtension();
     }
 }
