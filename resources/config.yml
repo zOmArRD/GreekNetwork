@@ -6,14 +6,14 @@
 # No reason for edit this.
 config-version: 1
 
-# Supported languages (English (en_US), Czech (cs_CZ), German (de_DE), Japanese (ja_JP), Russian (ru_RU), Chinese (zh_CN), Indonesian (ina_IND))
-# Language is automatically chosen from minecraft. However 'lang' in config is default language e.g for players with Spanish lang.
-lang: 'en_US'
-
 # Set it to true, and GreekNetwork won't automatically select player's language, instead of this will use lang placed in config
 forceDefaultLang: false
 
 general:
+  # Supported languages (English (en_US), Czech (cs_CZ), German (de_DE), Japanese (ja_JP), Russian (ru_RU), Chinese (zh_CN), Indonesian (ina_IND))
+  # Language is automatically chosen from minecraft. However 'lang' in config is default language e.g for players with Spanish lang.
+  #lang: 'en_US'
+
   # Plugin Prefix.
   # For color you can use "§" or "&".
   prefix: "§6§lGreek§8Network§r "
