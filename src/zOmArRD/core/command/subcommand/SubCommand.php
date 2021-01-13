@@ -42,8 +42,6 @@ use pocketmine\command\CommandSender;
 interface SubCommand
 {
     /**
-     * @api
-     *
      * @param CommandSender $sender
      * @param array $args
      * @param string $name

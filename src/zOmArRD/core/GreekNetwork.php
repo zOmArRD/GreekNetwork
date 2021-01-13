@@ -38,6 +38,7 @@ declare(strict_types=1);
 namespace zOmArRD\core;
 
 use pocketmine\plugin\PluginBase;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat as TE;
 use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\command\GreekCommand;
@@ -92,5 +93,12 @@ final class GreekNetwork extends PluginBase
 
         //DiscordWebhook::onEnable();
         $logger->info(Settings::$prefix . TE::GREEN . " System loaded");
+    }
+
+    public function onDisable()
+    {
+        foreach (Server::getInstance()->getOnlinePlayers() as $player){
+
+        }
     }
 }

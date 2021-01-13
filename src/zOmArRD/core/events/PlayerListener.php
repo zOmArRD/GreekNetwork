@@ -44,11 +44,12 @@ use pocketmine\event\player\PlayerExhaustEvent as PEE;
 use pocketmine\event\player\PlayerJoinEvent as PJE;
 use pocketmine\event\player\PlayerQuitEvent as PQE;
 use pocketmine\level\Position;
-use pocketmine\network\mcpe\protocol\ScriptCustomEventPacket;
 use pocketmine\Player;
-use pocketmine\utils\Binary;
+use pocketmine\utils\TextFormat as  TE;
+use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\config\Settings;
 use zOmArRD\core\GreekNetwork;
+use zOmArRD\core\server\Server;
 use zOmArRD\core\utils\PlayerUtils;
 
 class PlayerListener implements Listener
@@ -60,10 +61,11 @@ class PlayerListener implements Listener
     public function onPJE(PJE $e): void
     {
         $player = $e->getPlayer();
-        $name = $player->getName();
 
         /** Necessary when player join */
         PlayerUtils::onPJE($player);
+        PlayerUtils::sendSC($player);
+
         $player->teleport(new Position(Settings::$x, Settings::$y, Settings::$z, GreekNetwork::getInstance()->getServer()->getLevelByName(Settings::$lobby)));
 
         $e->setJoinMessage(null);
@@ -95,17 +97,8 @@ class PlayerListener implements Listener
 
     public function player(PlayerChatEvent $event){
         if ($event->getMessage() === "hcf"){
-            $event->getPlayer();
-            self::transferPlayer($event->getPlayer(), "hcf");
+            $player = $event->getPlayer();
+            Extensions::BungeeCord()->transferPlayer($player, "hcf");
         }
-    }
-
-    public static function transferPlayer(Player $player, String $server): bool
-    {
-        $pk = new ScriptCustomEventPacket();
-        $pk->eventName = "bungeecord:main";
-        $pk->eventData = Binary::writeShort(strlen("Connect")) . "Connect" . Binary::writeShort(strlen($server)) . $server;
-        $player->sendDataPacket($pk);
-        return true;
     }
 }

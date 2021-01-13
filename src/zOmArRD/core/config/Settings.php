@@ -68,18 +68,6 @@ class Settings
      */
     public final static function init(Config $config): void
     {
-        # ================== LANGUAGE CONFIG ==================
-        if (!is_dir(self::getDataFolder())) {
-            @mkdir(self::getDataFolder());
-        }
-        if (!is_dir(self::getDataFolder() . "languages")) {
-            @mkdir(self::getDataFolder() . "languages");
-        }
-        if (!is_file(self::getDataFolder() . "languages/en_US.yml")) {
-            GreekNetwork::getInstance()->saveResource("languages/en_US.yml");
-        }
-        # ================== LANGUAGE CONFIG ==================
-
 
         # ================== GENERALS CONFIG ==================
         $general = $config->get("general");
@@ -101,21 +89,5 @@ class Settings
         # ================== Player Config When Join ==================
 
         Server::getInstance()->getLogger()->info(Settings::$prefix . " §aLoaded configuration into system.");
-    }
-
-    /**
-     * @return string
-     */
-    public static function getDataFolder(): string
-    {
-        return GreekNetwork::getInstance()->getDataFolder();
-    }
-
-    /**
-     * @return string
-     */
-    public static function getDataPath(): string
-    {
-        return GreekNetwork::getInstance()->getServer()->getDataPath();
     }
 }
