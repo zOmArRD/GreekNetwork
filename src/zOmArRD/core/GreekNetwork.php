@@ -39,6 +39,7 @@ namespace zOmArRD\core;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
+use pocketmine\utils\MainLogger;
 use pocketmine\utils\TextFormat as TE;
 use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\command\GreekCommand;
@@ -53,6 +54,9 @@ final class GreekNetwork extends PluginBase
 
     /** @var array $commands */
     public $commands = [];
+
+    /** @var bool $crashed */
+    private $crashed = true;
 
     /**
      * @return GreekNetwork|null
@@ -77,7 +81,7 @@ final class GreekNetwork extends PluginBase
         $logger = $this->getServer()->getLogger();
 
         $this->commands = [
-          "greek" => $cmd = new GreekCommand()
+            "greek" => $cmd = new GreekCommand()
         ];
 
         foreach ($this->commands as $command) {
@@ -91,14 +95,21 @@ final class GreekNetwork extends PluginBase
         $lobby->setTime(0);
         $lobby->stopTime = true;
 
+        $this->crashed = false;
+
         //DiscordWebhook::onEnable();
         $logger->info(Settings::$prefix . TE::GREEN . " System loaded");
     }
 
     public function onDisable()
     {
-        foreach (Server::getInstance()->getOnlinePlayers() as $player){
-
+        try {
+            if ($this->crashed) return;
+            $this->getLogger()->info(Settings::$prefix . " §cSystem disabled");
+        } catch (\Throwable $error){
+            MainLogger::getLogger()->logException($error);
+            $this->getLogger()->info(Settings::$prefix . "The System have problems, contact the Dev");
         }
-    }
+        sleep(1);
+     }
 }

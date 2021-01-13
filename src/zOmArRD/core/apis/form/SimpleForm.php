@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: zOmArRD
@@ -35,72 +35,81 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\events;
+namespace zOmArRD\core\apis\form;
 
-use pocketmine\event\entity\EntityDamageEvent as EDE;
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerChatEvent as PCE;
-use pocketmine\event\player\PlayerExhaustEvent as PEE;
-use pocketmine\event\player\PlayerJoinEvent as PJE;
-use pocketmine\event\player\PlayerQuitEvent as PQE;
-use pocketmine\level\Position;
-use zOmArRD\core\addons\Extensions;
-use zOmArRD\core\config\Settings;
-use zOmArRD\core\GreekNetwork;
-use zOmArRD\core\utils\PlayerUtils;
-
-class PlayerListener implements Listener
+class SimpleForm extends Form
 {
+
+    const IMAGE_TYPE_PATH = 0;
+    const IMAGE_TYPE_URL = 1;
+
+    /** @var string */
+    private $content = "";
+
+    private $labelMap = [];
+
     /**
-     * Function when Player join to the Server
-     * @param PJE $e
+     * @param callable|null $callable
      */
-    public function onPJE(PJE $e): void
+    public function __construct(?callable $callable)
     {
-        $player = $e->getPlayer();
-
-        /** Necessary when player join */
-        PlayerUtils::onPJE($player);
-        PlayerUtils::sendSC($player);
-        PlayerUtils::giveItems($player);
-
-        $player->teleport(new Position(Settings::$x, Settings::$y, Settings::$z, GreekNetwork::getInstance()->getServer()->getLevelByName(Settings::$lobby)));
-        $player->setAllowFlight(true);
-
-        $e->setJoinMessage(null);
-        $player->sendMessage(Settings::$joinMessage);
+        parent::__construct($callable);
+        $this->data["type"] = "form";
+        $this->data["title"] = "";
+        $this->data["content"] = $this->content;
     }
 
-    /**
-     * @param PQE $e
-     */
-    public function onPLE(PQE $e): void
+    public function processData(&$data): void
     {
-        $player = $e->getPlayer();
-        $e->setQuitMessage(null);
-        //PlayerUtils::getSafeSpawn($player);
+        $data = $this->labelMap[$data] ?? null;
     }
 
     /**
-     * @param EDE $e
+     * @param string $title
      */
-    public function onEDE(EDE $e): void
+    public function setTitle(string $title): void
     {
-        $e->setCancelled(true);
+        $this->data["title"] = $title;
     }
 
-    public function onPEE(PEE $e): void
+    /**
+     * @return string
+     */
+    public function getTitle(): string
     {
-        $e->setCancelled(true);
+        return $this->data["title"];
     }
 
-    public function onPCE(PCE $e){
-        if ($e->getMessage() === "hcf"){
-            $player = $e->getPlayer();
-            Extensions::BungeeCord()->transferPlayer($player, "hcf");
+    /**
+     * @return string
+     */
+    public function getContent(): string
+    {
+        return $this->data["content"];
+    }
+
+    /**
+     * @param string $content
+     */
+    public function setContent(string $content): void
+    {
+        $this->data["content"] = $content;
+    }
+
+    /**
+     * @param string $text
+     * @param int $imageType
+     * @param string $imagePath
+     * @param string $label
+     */
+    public function addButton(string $text, int $imageType = -1, string $imagePath = "", ?string $label = null): void
+    {
+        $content = ["text" => $text];
+        if ($imageType !== -1) {
+            $content["image"]["type"] = $imageType === 0 ? "path" : "url";
+            $content["image"]["data"] = $imagePath;
         }
-        $pl_name = $e->getPlayer()->getName();
-        $message = $e->getMessage();
-        $e->setFormat("§6" . $pl_name . "§7: " . $message);
+        $this->data["buttons"][] = $content;
+        $this->labelMap[] = $label ?? count($this->labelMap);
     }
 }
