@@ -40,6 +40,7 @@ general:
   z: -3
   lobby: "hub"
 
+Mysql:
   # Mysql Credentials
   # Host (IP) - Username (Default = root) - Password (Password of DataBase)
   # Database (Mysql Table) - Server (Name of this Server)

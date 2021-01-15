@@ -37,7 +37,9 @@ declare(strict_types=1);
  */
 namespace zOmArRD\core\events;
 
+use Cassandra\Set;
 use pocketmine\event\entity\EntityDamageEvent as EDE;
+use pocketmine\event\inventory\InventoryTransactionEvent as ITE;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent as PCE;
 use pocketmine\event\player\PlayerExhaustEvent as PEE;
@@ -47,7 +49,11 @@ use pocketmine\level\Position;
 use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\config\Settings;
 use zOmArRD\core\GreekNetwork;
+use zOmArRD\core\mysql\AsyncQueue;
+use zOmArRD\core\mysql\InsertQuery;
 use zOmArRD\core\utils\PlayerUtils;
+//Use the class
+use SunProxy\SunProxyAPI\SunProxyAPI;
 
 class PlayerListener implements Listener
 {
@@ -58,11 +64,16 @@ class PlayerListener implements Listener
     public function onPJE(PJE $e): void
     {
         $player = $e->getPlayer();
+        $server = Settings::$server;
 
         /** Necessary when player join */
         PlayerUtils::onPJE($player);
         PlayerUtils::sendSC($player);
         PlayerUtils::giveItems($player);
+        PlayerUtils::sendFloatingText($player);
+
+        /** Mysql no touch :v */
+        AsyncQueue::submitQuery(new InsertQuery("UPDATE servers SET players = players+1 WHERE server='{$server}'"));
 
         $player->teleport(new Position(Settings::$x, Settings::$y, Settings::$z, GreekNetwork::getInstance()->getServer()->getLevelByName(Settings::$lobby)));
         $player->setAllowFlight(true);
@@ -77,8 +88,12 @@ class PlayerListener implements Listener
     public function onPLE(PQE $e): void
     {
         $player = $e->getPlayer();
+        $server = Settings::$server;
+
+        AsyncQueue::submitQuery(new InsertQuery("UPDATE servers SET players = players-1 WHERE server='{$server}'"));
+
         $e->setQuitMessage(null);
-        //PlayerUtils::getSafeSpawn($player);
+        $player->teleport(new Position(Settings::$x, Settings::$y, Settings::$z, GreekNetwork::getInstance()->getServer()->getLevelByName(Settings::$lobby)));
     }
 
     /**
@@ -94,13 +109,36 @@ class PlayerListener implements Listener
         $e->setCancelled(true);
     }
 
-    public function onPCE(PCE $e){
-        if ($e->getMessage() === "hcf"){
+    /**
+     * @param PCE $e
+     */
+    public function onPCE(PCE $e)
+    {
+        if ($e->getMessage() === "hcf") {
             $player = $e->getPlayer();
             Extensions::BungeeCord()->transferPlayer($player, "hcf");
+        }
+        if ($e->getMessage() === "hcf1") {
+            $player = $e->getPlayer();
+            SunProxyAPI::FastTransferPlayer($player, "104.128.48.53", (int)19209);
         }
         $pl_name = $e->getPlayer()->getName();
         $message = $e->getMessage();
         $e->setFormat("§6" . $pl_name . "§7: " . $message);
+    }
+
+    /**
+     * @param ITE $e
+     */
+    public function onITE(ITE $e): void
+    {
+        $entity = $e->getTransaction()->getSource();
+
+        if ($entity->getLevel()->getName() === Settings::$lobby) {
+            $e->setCancelled(true);
+            if ($entity->isOp()) {
+                $e->setCancelled(false);
+            }
+        }
     }
 }

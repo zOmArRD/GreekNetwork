@@ -57,6 +57,14 @@ class Settings
 
     public static $joinMessage = "";
 
+    public static $con;
+    public static $host;
+    public static $username = "";
+    public static $password = "";
+    public static $database = "";
+    public static $server = "";
+    public static $config;
+
     /** @var int */
     public static $x = 50;
     public static $y = 100;
@@ -71,13 +79,23 @@ class Settings
 
         # ================== GENERALS CONFIG ==================
         $general = $config->get("general");
+        $mysql = $config->get("Mysql");
         self::$prefix = str_replace("&", "§", $general['prefix']);
 
         self::$fallback_server = $general["fallback_server"];
 
         self::$joinMessage = str_replace("&", "§", $general['server_join_message']);
-
         # ================== GENERALS CONFIG ==================
+
+
+        # ================== Mysql Config  ==================
+        self::$database = $mysql['database'];
+        self::$username = $mysql['username'];
+        self::$password = $mysql['password'];
+        self::$server = $mysql['server'];
+        self::$con = new \mysqli(self::$host, self::$username, self::$password, "greek");
+
+        # ================== Mysql Config  ==================
 
 
         # ================== Player Config When Join ==================

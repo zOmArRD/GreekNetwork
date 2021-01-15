@@ -35,69 +35,34 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\apis\text;
+namespace zOmArRD\core\utils;
 
-use pocketmine\entity\Entity;
-use pocketmine\item\Item;
-use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\protocol\AddPlayerPacket;
-use pocketmine\network\mcpe\protocol\RemoveActorPacket;
 use pocketmine\Player;
-use pocketmine\utils\UUID;
+use zOmArRD\core\apis\form\SimpleForm;
 
-/**
- * Class FloatingTextApi
- * @package zOmArRD\core\apis\text
- */
-class FloatingTextApi {
+class FormManager
+{
+    public static function serverSelector(Player $player)
+    {
+        $form = new SimpleForm(function (Player $player, ?int $data) {
+            if (!is_null($data)) {
+                switch ($data) {
+                    case 0:
 
-    /** @var array $texts */
-    private static $texts = [];
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
 
-    /**
-     * @param Vector3 $pos
-     * @return int
-     */
-    public function createText(Vector3 $pos): int {
-        $eid = Entity::$entityCount++;
-
-        $pk = new AddPlayerPacket();
-        $pk->username = "Text";
-        $pk->uuid = UUID::fromRandom();
-        $pk->entityRuntimeId = $eid;
-        $pk->entityUniqueId = $eid;
-        $pk->position = $pos;
-        $pk->item = Item::get(0);
-        $pk->metadata = [
-            Entity::DATA_FLAGS => [Entity::DATA_TYPE_LONG, 1 << Entity::DATA_FLAG_IMMOBILE],
-            Entity::DATA_SCALE => [Entity::DATA_TYPE_FLOAT, 0]
+        $images = [
+            "close" => "textures/gui/newgui/mob_effects/strength_effect",
         ];
+        $form->setTitle("§l§7» §6Greek §8Network §7«");
+        $form->setContent("§eSelect which server you want to transfer to");
 
-        self::$texts[$eid] = $pk;
-
-        return $eid;
-    }
-
-    /**
-     * @param int $eid
-     * @param Player $player
-     * @param string $text
-     */
-    public function sendText(int $eid, Player $player, string $text = "Text") {
-        /** @var AddPlayerPacket $pk */
-        $pk = clone self::$texts[$eid];
-        $pk->username = $text;
-
-        $player->dataPacket($pk);
-    }
-
-    /**
-     * @param int $eid
-     * @param Player $player
-     */
-    public function removeText(int $eid, Player $player) {
-        $pk = new RemoveActorPacket();
-        $pk->entityUniqueId = $eid;
-        $player->dataPacket($pk);
+        $form->addButton("§l§6Greek §7| §aHCF", 0, $images['close']);
+        $player->sendForm($form);
     }
 }

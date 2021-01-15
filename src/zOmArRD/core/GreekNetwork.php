@@ -37,6 +37,7 @@ declare(strict_types=1);
  */
 namespace zOmArRD\core;
 
+use pocketmine\network\mcpe\protocol\types\SkinAdapterSingleton;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 use pocketmine\utils\MainLogger;
@@ -44,6 +45,7 @@ use pocketmine\utils\TextFormat as TE;
 use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\command\GreekCommand;
 use zOmArRD\core\config\Settings;
+use zOmArRD\core\utils\PersonaSkinAdapter;
 
 final class GreekNetwork extends PluginBase
 {
@@ -57,6 +59,8 @@ final class GreekNetwork extends PluginBase
 
     /** @var bool $crashed */
     private $crashed = true;
+
+    private $originalAdaptor = null;
 
     /**
      * @return GreekNetwork|null
@@ -78,11 +82,16 @@ final class GreekNetwork extends PluginBase
 
     public function onEnable(): void
     {
+
         $logger = $this->getServer()->getLogger();
+
+        $this->originalAdaptor = SkinAdapterSingleton::get();
+        SkinAdapterSingleton::set(new PersonaSkinAdapter());
 
         $this->commands = [
             "greek" => $cmd = new GreekCommand()
         ];
+
 
         foreach ($this->commands as $command) {
             $this->getServer()->getCommandMap()->register("greek", $command);
@@ -90,6 +99,9 @@ final class GreekNetwork extends PluginBase
 
         $extensions = new Extensions();
         $extensions->loadExtensions();
+
+        $mysql = Extensions::Mysql();
+        $mysql->onLoad();
 
         $lobby = GreekNetwork::getInstance()->getServer()->getDefaultLevel();
         $lobby->setTime(0);
@@ -103,6 +115,14 @@ final class GreekNetwork extends PluginBase
 
     public function onDisable()
     {
+        if ($this->originalAdaptor !== null){
+            SkinAdapterSingleton::set($this->originalAdaptor);
+        }
+        foreach (GreekNetwork::getInstance()->getServer()->getOnlinePlayers() as $players){
+            Extensions::BungeeCord()->transferPlayer($players, "hcf1");
+        }
+        $mysql = Extensions::Mysql();
+        $mysql->onDisable();
         try {
             if ($this->crashed) return;
             $this->getLogger()->info(Settings::$prefix . " §cSystem disabled");

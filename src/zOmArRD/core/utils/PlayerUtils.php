@@ -1,10 +1,43 @@
 <?php
 declare(strict_types=1);
-
+/**
+ * Created by PhpStorm.
+ * User: zOmArRD
+ * Date: 18/12/20
+ *       ___               _         ____  ____
+ *  ____/ _ \ _ __ ___    / \   _ __|  _ \|  _ \
+ * |_  / | | | '_ ` _ \  / _ \ | '__| |_) | | | |
+ *  / /| |_| | | | | | |/ ___ \| |  |  _ <| |_| |
+ * /___|\___/|_| |_| |_/_/   \_\_|  |_| \_\____/
+ *
+ * Adapted from the Wizardry License
+ *
+ * Copyright (c) 2020 zOmArRD and contributors
+ *
+ * Permission is hereby granted to any persons and/or organizations
+ * using this software to copy, modify, merge, publish, and distribute it.
+ * Said persons and/or organizations are not allowed to use the software or
+ * any derivatives of the work for commercial use or any other means to generate
+ * income, nor are they allowed to claim this software as their own.
+ *
+ * The persons and/or organizations are also disallowed from sub-licensing
+ * and/or trademarking this software without explicit permission from zOmArRD.
+ *
+ * Any persons and/or organizations using this software must disclose their
+ * source code and have it publicly available, include this license,
+ * provide sufficient credit to the original authors of the project (IE: zOmArRD),
+ * as well as provide a link to the original project.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,FITNESS FOR A PARTICULAR
+ * PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+ * USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 namespace zOmArRD\core\utils;
 
-use pocketmine\network\mcpe\protocol\AdventureSettingsPacket;
-use pocketmine\network\mcpe\protocol\types\PlayerPermissions;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat as TE;
 use zOmArRD\core\addons\Extensions;
@@ -59,5 +92,31 @@ class PlayerUtils
     {
         $inventory = $player->getInventory();
         $inventory->setItem(4, Items::getServerSelectItem());
+    }
+
+    public static function sendFloatingText(Player $player): void
+    {
+        $pn = $player->getName();
+        $floating = Extensions::FloatingText();
+
+        if ($player instanceof Player) {
+            $text1 = $floating->createText(new Vector3(0.50, 89.7, 4.50));
+            $text2 = $floating->createText(new Vector3(0.50, 89.3, 4.50));
+            $text3 = $floating->createText(new Vector3(0.50, 88.98, 4.50));
+            $text4 = $floating->createText(new Vector3(0.50, 88.65, 4.50));
+            $text5 = $floating->createText(new Vector3(0.50, 88.35, 4.50));
+            $text6 = $floating->createText(new Vector3(0.50, 88.05, 4.50));
+            $text7 = $floating->createText(new Vector3(0.50, 87.75, 4.50));
+            $text8 = $floating->createText(new Vector3(0.50, 87.45, 4.50));
+
+            $floating->sendText($text1, $player, "§l§6Greek §8Network");
+            $floating->sendText($text2, $player, "§7───────────────────");
+            $floating->sendText($text3, $player, "§fWelcome§6 $pn");
+            $floating->sendText($text4, $player, "§7» §9§lDiscord §r§7«");
+            $floating->sendText($text5, $player, "§o§fdiscord.gg/Greek");
+            $floating->sendText($text6, $player, "§7» §a§lStore §r§7«");
+            $floating->sendText($text7, $player, "§o§fgreekmc.net/shop");
+            $floating->sendText($text8, $player, "§7───────────────────");
+        }
     }
 }
