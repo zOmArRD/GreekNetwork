@@ -37,9 +37,8 @@ declare(strict_types=1);
  */
 namespace zOmArRD\core\server;
 
-use EndGames\EndGamesDatabase\AsyncQueue;
-use EndGames\EndGamesDatabase\SelectQuery;
-use pocketmine\Player;
+use zOmArRD\core\mysql\AsyncQueue;
+use zOmArRD\core\mysql\SelectQuery;
 
 /**
  * Class Server

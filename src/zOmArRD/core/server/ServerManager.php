@@ -1,10 +1,10 @@
 <?php
 namespace zOmArRD\core\server;
 
-use EndGames\EndGamesDatabase\AsyncQueue;
-use EndGames\EndGamesDatabase\Database;
-use EndGames\EndGamesDatabase\SelectQuery;
 use zOmArRD\core\GreekNetwork;
+use zOmArRD\core\mysql\AsyncQueue;
+use zOmArRD\core\mysql\Mysql;
+use zOmArRD\core\mysql\SelectQuery;
 use zOmArRD\core\task\ServerSyncTask;
 
 /**
@@ -37,7 +37,7 @@ class ServerManager
         AsyncQueue::submitQuery(new SelectQuery("SELECT * FROM servers;"), function ($rows) {
             foreach ($rows as $row) {
                 $server = new Server($row["server"], $row["players"], $row["status"] === 1);
-                if ($row["server"] === Database::getInstance()->getCurrentServerName()) {
+                if ($row["server"] === Mysql::getCurrentServerName()) {
                     self::$currentServer = $server;
                 } else {
                     self::$servers[] = $server;
@@ -48,9 +48,7 @@ class ServerManager
                     }
                 }
             }
-
         });
-
     }
 
     /**

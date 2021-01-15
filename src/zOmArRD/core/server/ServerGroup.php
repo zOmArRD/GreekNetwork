@@ -52,9 +52,8 @@ class ServerGroup
     /**
      * ServerGroup constructor.
      * @param $name
-     * @param $servers
      */
-    public function __construct($name, $servers)
+    public function __construct($name)
     {
         $this->name = $name;
     }
@@ -78,21 +77,6 @@ class ServerGroup
             return true;
         }
         return false;
-    }
-
-    public function findOptimalServer(/*Player $player*/)
-    {
-        $servers = $this->getServers();
-        $sort = array_map(function (Server $server) {
-            return $server->getOnlinePlayers();
-        }, $servers);
-        asort($sort);
-        $finalServer = null;
-        foreach ($sort as $key) {
-            $server = $servers[$key];
-            // TODO: Actually make it join the most optimal server.
-        }
-        return $finalServer;
     }
 
     /**
