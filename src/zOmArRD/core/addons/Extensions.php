@@ -39,11 +39,14 @@ namespace zOmArRD\core\addons;
 
 use pocketmine\Player;
 use pocketmine\utils\Config;
+use zOmArRD\core\apis\text\FloatingTextAPI;
 use zOmArRD\core\config\Settings;
 use zOmArRD\core\events\DataPacketListener;
+use zOmArRD\core\events\ItemListener;
 use zOmArRD\core\events\PlayerListener;
 use zOmArRD\core\events\WorldListener;
 use zOmArRD\core\GreekNetwork;
+use zOmArRD\core\mysql\Mysql;
 use zOmArRD\core\task\GreekTask;
 
 /**
@@ -62,7 +65,7 @@ class Extensions
     {
         $plugin = GreekNetwork::getInstance()->getServer()->getPluginManager();
 
-        foreach ([new WorldListener(), new PlayerListener(), new DataPacketListener()] as $ev) {
+        foreach ([new WorldListener(), new PlayerListener(), new DataPacketListener(), new ItemListener()] as $ev) {
             $plugin->registerEvents($ev, GreekNetwork::getInstance());
         }
     }
@@ -111,5 +114,21 @@ class Extensions
     public static function Scoreboard(): ScoreExtension
     {
         return new ScoreExtension();
+    }
+
+    /**
+     * @return FloatingTextApi
+     */
+    public static function FloatingText(): FloatingTextApi
+    {
+        return new FloatingTextApi();
+    }
+
+    /**
+     * @return Mysql
+     */
+    public static function Mysql(): Mysql
+    {
+        return new Mysql();
     }
 }
