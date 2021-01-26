@@ -40,20 +40,20 @@ namespace zOmArRD\core\command;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\command\utils\CommandException;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
-use zOmArRD\core\command\subcommand\WorldTeleportSubCommand;
+use pocketmine\Server;
+use zOmArRD\core\command\subcommand\CreateNpcSubCommand;
+use zOmArRD\core\command\subcommand\HelpSubCommand;
 use zOmArRD\core\GreekNetwork;
-use zOmArRD\core\utils\LanguageManager;
+use zOmArRD\core\utils\PlayerUtils;
 
 class GreekCommand extends Command implements PluginIdentifiableCommand
 {
 
-    /** @var GreekNetwork $plugin */
     public $plugin;
 
-    /** @var array $subcommands */
+    /** @var $subcommands */
     public $subcommands = [];
 
     /**
@@ -63,46 +63,53 @@ class GreekCommand extends Command implements PluginIdentifiableCommand
     {
         parent::__construct("greek", "GreekNetwork Commands", null, ["gn"]);
         $this->plugin = GreekNetwork::getInstance();
-        $this->registerSubcommands();
+        $this->registerSubCommands();
     }
 
-    public function registerSubcommands(): void
-    {
-        $this->subcommands["worldtp"] = new WorldTeleportSubCommand;
+    public function registerSubCommands(){
+        $this->subcommands["setnpc"] = new CreateNpcSubCommand();
+        $this->subcommands["help"] = new HelpSubCommand();
     }
 
-    public function execute(CommandSender $sender, string $commandLabel, array $args)
-    {
-        if (!isset($args[0])) {
-            if ($sender->hasPermission("greek.cmd")) {
-                $sender->sendMessage(LanguageManager::getMsg($sender, "default-usage"));
+    public function execute(CommandSender $sender, string $commandLabel, array $args) {
+        if(!isset($args[0])) {
+            if($sender->hasPermission("greek.cmd")) {
+                $sender->sendMessage('§cUso: §7/greek help');
                 return;
             }
-            $sender->sendMessage(LanguageManager::getMsg($sender, "not-perms"));
+            $sender->sendMessage('§cNo tienes permiso para usar este comando');
             return;
         }
 
-        if ($this->getSubCommand($args[0]) === null) {
-            $sender->sendMessage(LanguageManager::getMsg($sender, "default-usage"));
+
+        if($this->getSubcommand($args[0]) === null) {
+            $sender->sendMessage('§cUso: §7/greek help');
             return;
         }
 
+        if(!$this->checkPerms($sender, $args[0])) {
+            $sender->sendMessage('§cNo tienes permiso para usar este comando');
+            return;
+        }
+
+        $name = $args[0];
+
+        array_shift($args);
+
+        /** @var SubCommand $subCommand */
+        $subCommand = $this->subcommands[$this->getSubcommand($name)];
+        $subCommand->executeSub($sender, $args, $this->getSubcommand($name));
     }
 
-    /**
-     * @param string $name
-     * @return string|null
-     */
-    public function getSubCommand(string $name)
-    {
+    public function getSubCommand(string $name) {
         switch ($name) {
             case "help":
             case "?":
                 return "help";
-            case "leveltp":
-            case "worldtp":
-            case "wtp":
-                return "worldtp";
+            case "setnpc":
+            case "createnpc":
+            case "npc":
+                return "setnpc";
         }
         return null;
     }
@@ -112,11 +119,10 @@ class GreekCommand extends Command implements PluginIdentifiableCommand
      * @param string $command
      * @return bool
      */
-    public function checkPerms(CommandSender $sender, string $command): bool
-    {
-        if ($sender instanceof Player) {
-            if (!$sender->hasPermission("greek.cmd" . $this->getSubcommand($command))) {
-                $sender->sendMessage(LanguageManager::getMsg($sender, "not-perms"));
+    public function checkPerms(CommandSender $sender, string $command):bool {
+        if($sender instanceof Player) {
+            if(!$sender->hasPermission("mw.cmd." . $this->getSubcommand($command))) {
+                $sender->sendMessage('§cNo tienes permiso para usar este comando');
                 return false;
             } else {
                 return true;
@@ -127,7 +133,15 @@ class GreekCommand extends Command implements PluginIdentifiableCommand
     }
 
     /**
-     * @return Plugin|GreekNetwork
+     * @return Server
+     */
+    public function getServer(): Server
+    {
+        return Server::getInstance();
+    }
+
+    /**
+     * @return Plugin
      */
     public function getPlugin(): Plugin
     {
