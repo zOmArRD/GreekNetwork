@@ -93,7 +93,8 @@ class Settings
         self::$username = $mysql['username'];
         self::$password = $mysql['password'];
         self::$server = $mysql['server'];
-        self::$con = new \mysqli(self::$host, self::$username, self::$password, "greek");
+        self::$host = $mysql['host'];
+        self::$con = new \mysqli(self::$host, self::$username, self::$password, self::$database);
 
         # ================== Mysql Config  ==================
 

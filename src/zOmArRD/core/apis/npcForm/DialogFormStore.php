@@ -35,19 +35,51 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\providers;
+namespace zOmArRD\core\apis\npcForm;
 
-use pocketmine\item\Item;
-use pocketmine\item\ItemFactory;
-use pocketmine\item\ItemIds;
+use InvalidArgumentException;
+use pocketmine\entity\Entity;
 
-abstract class Items
+class DialogFormStore
 {
+
+    /** @var DialogForm[] */
+    static private $forms = [];
+
     /**
-     * @return Item
+     * @param Entity $entity
+     * @return DialogForm|null
      */
-    public static function getServerSelectItem(): Item
+    static public function getFormByEntity(Entity $entity): ?DialogForm
     {
-        return ItemFactory::get(ItemIds::BOOK)->setCustomName("§r§6§lServer Selector §r§7(use)");
+        foreach (self::$forms as $form) {
+            if ($form->getEntity() === $entity) {
+                return $form;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param DialogForm $form
+     */
+    static public function registerForm(DialogForm $form): void
+    {
+        if (in_array($form, self::$forms)) {
+            throw new InvalidArgumentException("Trying to overwrite an already registered npc form");
+        }
+        self::$forms[] = $form;
+    }
+
+    /**
+     * @param DialogForm $form
+     */
+    static public function unregisterForm(DialogForm $form): void
+    {
+        if (($key = array_search($form, self::$forms)) !== false) {
+            unset(self::$forms[$key]);
+        } else {
+            throw new InvalidArgumentException("Tried to unregister a dialog form that wasn't registered");
+        }
     }
 }

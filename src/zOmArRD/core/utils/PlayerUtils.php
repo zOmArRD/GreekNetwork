@@ -94,29 +94,51 @@ class PlayerUtils
         $inventory->setItem(4, Items::getServerSelectItem());
     }
 
-    public static function sendFloatingText(Player $player): void
+    /* public function floatingText01(Player $player): void
+     {
+         $pn = $player->getName();
+         $floating = Extensions::FloatingText();
+
+         if ($player instanceof Player) {
+             $text1 = $floating->createText(new Vector3(0.50, 89.7, 4.50));
+             $text2 = $floating->createText(new Vector3(0.50, 89.3, 4.50));
+             $text3 = $floating->createText(new Vector3(0.50, 88.98, 4.50));
+             $text4 = $floating->createText(new Vector3(0.50, 88.65, 4.50));
+             $text5 = $floating->createText(new Vector3(0.50, 88.35, 4.50));
+             $text6 = $floating->createText(new Vector3(0.50, 88.05, 4.50));
+             $text7 = $floating->createText(new Vector3(0.50, 87.75, 4.50));
+             $text8 = $floating->createText(new Vector3(0.50, 87.45, 4.50));
+
+             $floating->sendText($text1, $player, "§l§6Greek §8Network");
+             $floating->sendText($text2, $player, "§7───────────────────");
+             $floating->sendText($text3, $player, "§fWelcome§6 $pn");
+             $floating->sendText($text4, $player, "§7» §9§lDiscord §r§7«");
+             $floating->sendText($text5, $player, "§o§fdiscord.gg/Greek");
+             $floating->sendText($text6, $player, "§7» §a§lStore §r§7«");
+             $floating->sendText($text7, $player, "§o§fgreekmc.net/shop");
+             $floating->sendText($text8, $player, "§7───────────────────");
+         }
+     } */
+
+    public static function sendFloatingText02(Player $player): void
     {
         $pn = $player->getName();
         $floating = Extensions::FloatingText();
 
         if ($player instanceof Player) {
-            $text1 = $floating->createText(new Vector3(0.50, 89.7, 4.50));
-            $text2 = $floating->createText(new Vector3(0.50, 89.3, 4.50));
-            $text3 = $floating->createText(new Vector3(0.50, 88.98, 4.50));
-            $text4 = $floating->createText(new Vector3(0.50, 88.65, 4.50));
-            $text5 = $floating->createText(new Vector3(0.50, 88.35, 4.50));
-            $text6 = $floating->createText(new Vector3(0.50, 88.05, 4.50));
-            $text7 = $floating->createText(new Vector3(0.50, 87.75, 4.50));
-            $text8 = $floating->createText(new Vector3(0.50, 87.45, 4.50));
+            $text1 = $floating->createText(new Vector3(-58.50, 93.5, 11.50));
+            $text2 = $floating->createText(new Vector3(-58.50, 93, 11.50));
+            $text3 = $floating->createText(new Vector3(-58.50, 92.80, 11.50));
+            $text4 = $floating->createText(new Vector3(-58.50, 92.50, 11.50));
+            $text5 = $floating->createText(new Vector3(-58.50, 92.10, 11.50));
+            $text6 = $floating->createText(new Vector3(-58.50, 91.80, 11.50));
 
-            $floating->sendText($text1, $player, "§l§6Greek §8Network");
-            $floating->sendText($text2, $player, "§7───────────────────");
-            $floating->sendText($text3, $player, "§fWelcome§6 $pn");
-            $floating->sendText($text4, $player, "§7» §9§lDiscord §r§7«");
-            $floating->sendText($text5, $player, "§o§fdiscord.gg/Greek");
-            $floating->sendText($text6, $player, "§7» §a§lStore §r§7«");
-            $floating->sendText($text7, $player, "§o§fgreekmc.net/shop");
-            $floating->sendText($text8, $player, "§7───────────────────");
+            $floating->sendText($text1, $player, "§l§6Greek §7| §r§aLobby");
+            $floating->sendText($text2, $player, "§fWelcome §e" . $pn . " §rto §l§6Greek §8Network");
+            $floating->sendText($text3, $player, "§fYou can purchase a rank on our store at");
+            $floating->sendText($text4, $player, "§6https://greekmc.net §ffor a higher priority");
+            $floating->sendText($text5, $player, "§fClick on the §6book §fto");
+            $floating->sendText($text6, $player, "§fnavigate to our servers.");
         }
     }
 }

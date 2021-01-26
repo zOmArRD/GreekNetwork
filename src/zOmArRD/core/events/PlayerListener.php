@@ -70,7 +70,7 @@ class PlayerListener implements Listener
         PlayerUtils::onPJE($player);
         PlayerUtils::sendSC($player);
         PlayerUtils::giveItems($player);
-        PlayerUtils::sendFloatingText($player);
+        PlayerUtils::sendFloatingText02($player);
 
         /** Mysql no touch :v */
         AsyncQueue::submitQuery(new InsertQuery("UPDATE servers SET players = players+1 WHERE server='{$server}'"));

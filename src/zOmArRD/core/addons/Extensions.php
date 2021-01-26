@@ -40,6 +40,7 @@ namespace zOmArRD\core\addons;
 use pocketmine\Player;
 use pocketmine\utils\Config;
 use zOmArRD\core\apis\text\FloatingTextAPI;
+use zOmArRD\core\command\GreekCommand;
 use zOmArRD\core\config\Settings;
 use zOmArRD\core\events\DataPacketListener;
 use zOmArRD\core\events\ItemListener;
@@ -47,7 +48,7 @@ use zOmArRD\core\events\PlayerListener;
 use zOmArRD\core\events\WorldListener;
 use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\mysql\Mysql;
-use zOmArRD\core\task\GreekTask;
+use zOmArRD\core\task\ServerSyncTask;
 
 /**
  * Class Extensions
@@ -55,13 +56,17 @@ use zOmArRD\core\task\GreekTask;
  */
 class Extensions
 {
+
+    public $commands = [];
+
     public function loadExtensions(): void
     {
         $this->registerListener();
-        //$this->registerTask();
+        $this->registerTask();
+        $this->registerCommands();
     }
 
-    public function registerListener(): void
+    function registerListener(): void
     {
         $plugin = GreekNetwork::getInstance()->getServer()->getPluginManager();
 
@@ -70,10 +75,21 @@ class Extensions
         }
     }
 
-    public function registerTask(): void
+    function registerTask(): void
     {
         $plugin = GreekNetwork::getInstance()->getScheduler();
-        $plugin->scheduleRepeatingTask(new GreekTask(), 20);
+       // $plugin->scheduleRepeatingTask(new GreekTask(), 20);
+        //$plugin->scheduleRepeatingTask(new ServerSyncTask(), 200);
+    }
+
+    function registerCommands(): void
+    {
+        $this->commands = [
+            "greek" => $cmd = new GreekCommand()
+        ];
+        foreach ($this->commands as $command){
+            GreekNetwork::getInstance()->getServer()->getCommandMap()->register("greek", $command);
+        }
     }
 
     public static function initConfig(): void
