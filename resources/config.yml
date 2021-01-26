@@ -6,9 +6,6 @@
 # No reason for edit this.
 config-version: 1
 
-# Set it to true, and GreekNetwork won't automatically select player's language, instead of this will use lang placed in config
-forceDefaultLang: false
-
 general:
   # Supported languages (English (en_US), Czech (cs_CZ), German (de_DE), Japanese (ja_JP), Russian (ru_RU), Chinese (zh_CN), Indonesian (ina_IND))
   # Language is automatically chosen from minecraft. However 'lang' in config is default language e.g for players with Spanish lang.
@@ -35,10 +32,10 @@ general:
   gamemode: 2
 
   # Coords where player Teleport to join.
-  x: 1
-  y: 89
-  z: -3
-  lobby: "hub"
+  x: -71
+  y: 97
+  z: 12
+  lobby: "greek"
 
 Mysql:
   # Mysql Credentials
@@ -46,7 +43,7 @@ Mysql:
   # Database (Mysql Table) - Server (Name of this Server)
   host: 127.0.0.1
   username: root
-  password: "YourPasswordHere"
-  database: "MysqlDtabase"
+  password: "!d@5$ZIVR!rA"
+  database: "greek"
   server: lobby1
 ...
