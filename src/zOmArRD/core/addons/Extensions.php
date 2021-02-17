@@ -37,18 +37,22 @@ declare(strict_types=1);
  */
 namespace zOmArRD\core\addons;
 
+use pocketmine\entity\Entity;
 use pocketmine\Player;
 use pocketmine\utils\Config;
 use zOmArRD\core\apis\text\FloatingTextAPI;
 use zOmArRD\core\command\GreekCommand;
 use zOmArRD\core\config\Settings;
 use zOmArRD\core\events\DataPacketListener;
+use zOmArRD\core\events\EntityListener;
 use zOmArRD\core\events\ItemListener;
 use zOmArRD\core\events\PlayerListener;
 use zOmArRD\core\events\WorldListener;
 use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\mysql\Mysql;
+use zOmArRD\core\task\ServersScheluder;
 use zOmArRD\core\task\ServerSyncTask;
+use zOmArRD\core\utils\Npc;
 
 /**
  * Class Extensions
@@ -64,13 +68,19 @@ class Extensions
         $this->registerListener();
         $this->registerTask();
         $this->registerCommands();
+        $this->registerEntity();
+    }
+
+    function registerEntity(): void
+    {
+        Entity::registerEntity(Npc::class, true);
     }
 
     function registerListener(): void
     {
         $plugin = GreekNetwork::getInstance()->getServer()->getPluginManager();
 
-        foreach ([new WorldListener(), new PlayerListener(), new DataPacketListener(), new ItemListener()] as $ev) {
+        foreach ([new WorldListener(), new PlayerListener(), new DataPacketListener(), new ItemListener(), new EntityListener()] as $ev) {
             $plugin->registerEvents($ev, GreekNetwork::getInstance());
         }
     }
@@ -78,8 +88,9 @@ class Extensions
     function registerTask(): void
     {
         $plugin = GreekNetwork::getInstance()->getScheduler();
-       // $plugin->scheduleRepeatingTask(new GreekTask(), 20);
-        //$plugin->scheduleRepeatingTask(new ServerSyncTask(), 200);
+
+        $plugin->scheduleRepeatingTask(new ServersScheluder(), 60);
+        $plugin->scheduleRepeatingTask(new ServerSyncTask(), 200);
     }
 
     function registerCommands(): void
@@ -146,5 +157,10 @@ class Extensions
     public static function Mysql(): Mysql
     {
         return new Mysql();
+    }
+
+    public static function Entity(): EntityExtension
+    {
+        return new EntityExtension();
     }
 }

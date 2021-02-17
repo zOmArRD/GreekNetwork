@@ -30,6 +30,7 @@ class HelpSubCommand implements SubCommand
 
         switch ($page) {
             default:
+                $text .= "\n" . "§2/greek help §fGreek Help Command";
                 $text .= "\n" . "§2/greek setnpc §fSpawn EntityExtension";
                 break;
         }

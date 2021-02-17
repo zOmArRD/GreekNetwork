@@ -30,7 +30,7 @@ class EntityExtension implements API
         $human->setNameTagAlwaysVisible(true);
         $human->setSkin(new Skin($name, $player->getSkin()->getSkinData(), $player->getSkin()->getCapeData(), $player->getSkin()->getGeometryName(), $player->getSkin()->getGeometryData()));
         $human->yaw = $player->getYaw();
-        $human->setScale(1.2);
+        $human->setScale(1);
         $human->pitch = $player->getPitch();
         $human->spawnToAll();
     }

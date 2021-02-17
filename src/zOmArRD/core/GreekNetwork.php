@@ -108,6 +108,8 @@ final class GreekNetwork extends PluginBase
         $lobby->setTime(0);
         $lobby->stopTime = true;
 
+        ServerManager::init($this, ["lobby", "hcf", "practice", "ffa"]);
+
         $this->crashed = false;
 
         //DiscordWebhook::onEnable();
@@ -120,7 +122,7 @@ final class GreekNetwork extends PluginBase
             SkinAdapterSingleton::set($this->originalAdaptor);
         }
         foreach (GreekNetwork::getInstance()->getServer()->getOnlinePlayers() as $players){
-            Extensions::BungeeCord()->transferPlayer($players, "hcf1");
+            Extensions::BungeeCord()->transferPlayer($players, "practice1");
         }
         $mysql = Extensions::Mysql();
         $mysql->onDisable();

@@ -38,6 +38,7 @@ declare(strict_types=1);
 namespace zOmArRD\core\utils;
 
 use pocketmine\Player;
+use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\apis\form\SimpleForm;
 
 class FormManager
@@ -48,9 +49,12 @@ class FormManager
             if (!is_null($data)) {
                 switch ($data) {
                     case 0:
-
+                        //Extensions::BungeeCord()->transferPlayer($player, "hcf1");
+                        $player->transfer("play.greekmc.net", 19130);
                         break;
-                    default:
+                    case 1:
+                        //Extensions::BungeeCord()->transferPlayer($player, "practice1");
+                        $player->transfer("play.greekmc.net", 18002);
                         break;
                 }
             }
@@ -62,7 +66,8 @@ class FormManager
         $form->setTitle("§l§7» §6Greek §8Network §7«");
         $form->setContent("§eSelect which server you want to transfer to");
 
-        $form->addButton("§l§6Greek §7| §aHCF", 0, $images['close']);
+        $form->addButton("§l§6Greek §7| §r§aHCF", 0, $images['close']);
+        $form->addButton("§l§6Greek §7| §r§aPractice", 0, $images['close']);
         $player->sendForm($form);
     }
 }
