@@ -35,33 +35,56 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 namespace zOmArRD\core\events;
 
-use pocketmine\event\Listener;
-use pocketmine\event\server\DataPacketReceiveEvent as DPRE;
-use pocketmine\network\mcpe\protocol\EmotePacket;
-use pocketmine\network\mcpe\protocol\LoginPacket;
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
-use pocketmine\Server;
+use zOmArRD\core\client\ClientSession;
+use pocketmine\event\Event;
+use zOmArRD\core\client\GreekProxyClient;
+use zOmArRD\core\GreekNetwork;
 
-class DataPacketListener implements Listener
+abstract class ClientEvent extends Event
 {
+
+    /** @var GreekNetwork */
+    private $plugin;
+
+    /** @var GreekProxyClient */
+    private $client;
+
     /**
-     * @param DPRE $ev
+     * ClientEvent constructor.
+     * @param GreekProxyClient $client
+     * @param GreekNetwork $plugin
      */
-    public function onDPRE(DPRE $ev): void
+    public function __construct(GreekProxyClient $client, GreekNetwork $plugin)
     {
-        $pk = $ev->getPacket();
+        $this->client = $client;
+        $this->plugin = $plugin;
+    }
 
-        if ($pk instanceof LoginPacket) {
-            if ($pk->protocol != ProtocolInfo::CURRENT_PROTOCOL and in_array($pk->protocol, [407, 418, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425])) {
-                $pk->protocol = ProtocolInfo::CURRENT_PROTOCOL;
-            }
-        }
 
-        if ($pk instanceof EmotePacket) {
-            $emoteId = $pk->getEmoteId();
-            Server::getInstance()->broadcastPacket($ev->getPlayer()->getViewers(), EmotePacket::create($ev->getPlayer()->getId(), $emoteId, 1 << 0));
-        }
+    /**
+     * @return GreekProxyClient
+     */
+    public function getClient(): GreekProxyClient
+    {
+        return $this->client;
+    }
+
+    /**
+     * @return ClientSession|null
+     */
+    public function getSession(): ?ClientSession
+    {
+        return $this->client->getSession();
+    }
+
+    /**
+     * @return GreekNetwork
+     */
+    public function getPlugin(): GreekNetwork
+    {
+        return $this->plugin;
     }
 }

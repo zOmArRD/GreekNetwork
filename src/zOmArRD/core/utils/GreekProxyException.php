@@ -35,19 +35,12 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\providers;
 
-use pocketmine\Player;
+namespace zOmArRD\core\utils;
 
-interface BungeeCord
+use RuntimeException;
+
+class GreekProxyException extends RuntimeException
 {
-
-    /**
-     * @param Player $player
-     * @param String $server
-     * @return bool
-     * @api
-     */
-    public function transferPlayer(Player $player, string $server): bool;
 
 }

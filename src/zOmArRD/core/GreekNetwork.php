@@ -39,13 +39,14 @@ namespace zOmArRD\core;
 
 use pocketmine\network\mcpe\protocol\types\SkinAdapterSingleton;
 use pocketmine\plugin\PluginBase;
-use pocketmine\Server;
 use pocketmine\utils\MainLogger;
 use pocketmine\utils\TextFormat as TE;
 use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\command\GreekCommand;
 use zOmArRD\core\config\Settings;
+use zOmArRD\core\protocol\ServerInfoRequestPacket;
 use zOmArRD\core\server\ServerManager;
+use zOmArRD\core\utils\PacketResponse;
 use zOmArRD\core\utils\PersonaSkinAdapter;
 
 final class GreekNetwork extends PluginBase
@@ -61,12 +62,28 @@ final class GreekNetwork extends PluginBase
     /** @var bool $crashed */
     private $crashed = true;
 
+    /** @var null */
     private $originalAdaptor = null;
 
+    /** @var GreekNetwork[] */
+    protected $clients = [];
+
+    /** @var int */
+    private $tickInterval;
+
+    /** @var string */
+    private $defaultClient;
+
+    /** @var int */
+    private $logLevel;
+
+    /** @var bool */
+    private $autoStart;
+
     /**
-     * @return GreekNetwork|null
+     * @return GreekNetwork
      */
-    public static function getInstance(): ?GreekNetwork
+    public static function getInstance(): GreekNetwork
     {
         return self::$instance;
     }
@@ -83,30 +100,43 @@ final class GreekNetwork extends PluginBase
 
     public function onEnable(): void
     {
-
         $logger = $this->getServer()->getLogger();
 
         $this->originalAdaptor = SkinAdapterSingleton::get();
         SkinAdapterSingleton::set(new PersonaSkinAdapter());
 
+        $this->tickInterval = $this->getConfig()->get("tickInterval");
+        $this->defaultClient = $this->getConfig()->get("defaultClient");
+        $this->logLevel = $this->getConfig()->get("logLevel");
+        $this->autoStart = $this->getConfig()->get("autoStart");
+
+        $this->clients = [];
+        foreach ($this->getConfig()->get("connections") as $clientName => $ignore) {
+            $this->createClient($clientName);
+        }
+
         $this->commands = [
             "greek" => $cmd = new GreekCommand()
         ];
-
 
         foreach ($this->commands as $command) {
             $this->getServer()->getCommandMap()->register("greek", $command);
         }
 
+        /** @var  $extensions */
         $extensions = new Extensions();
         $extensions->loadExtensions();
 
+        /** @var  $mysql */
         $mysql = Extensions::Mysql();
         $mysql->onLoad();
 
+        /** @var  $lobby */
         $lobby = GreekNetwork::getInstance()->getServer()->getDefaultLevel();
         $lobby->setTime(0);
         $lobby->stopTime = true;
+
+        ServerManager::init($this, ["lobby", "hcf", "practice", "ffa"]);
 
         $this->crashed = false;
 
@@ -116,21 +146,149 @@ final class GreekNetwork extends PluginBase
 
     public function onDisable()
     {
-        if ($this->originalAdaptor !== null){
+        if ($this->originalAdaptor !== null) {
             SkinAdapterSingleton::set($this->originalAdaptor);
         }
-        foreach (GreekNetwork::getInstance()->getServer()->getOnlinePlayers() as $players){
+
+        /*foreach (GreekNetwork::getInstance()->getServer()->getOnlinePlayers() as $players) {
             Extensions::BungeeCord()->transferPlayer($players, "hcf1");
+        }*/
+
+        foreach ($this->clients as $client) {
+            $client->shutdown();
         }
+
+        /** @var  $mysql */
         $mysql = Extensions::Mysql();
         $mysql->onDisable();
+
         try {
             if ($this->crashed) return;
             $this->getLogger()->info(Settings::$prefix . " §cSystem disabled");
-        } catch (\Throwable $error){
+        } catch (\Throwable $error) {
             MainLogger::getLogger()->logException($error);
             $this->getLogger()->info(Settings::$prefix . "The System have problems, contact the Dev");
         }
         sleep(1);
-     }
+    }
+
+    /**
+     * @param string $clientName
+     */
+    private function createClient(string $clientName): void
+    {
+        if (!isset($this->getConfig()->get("connections")[$clientName])) {
+            $this->getLogger()->warning("§cCan not load client " . $clientName . "! Wrong config!");
+            return;
+        }
+
+        $config = $this->getConfig()->get("connections")[$clientName];
+        $handshakeData = new HandshakeData($clientName, $config["password"], HandshakeData::SOFTWARE_POCKETMINE, self::STARGATE_VERSION);
+        $client = new StarGateClient($config["address"], (int)$config["port"], $handshakeData, $this);
+        $this->onClientCreation($clientName, $client);
+    }
+
+    /**
+     * @param string $clientName
+     * @param StarGateClient $client
+     */
+    public function onClientCreation(string $clientName, StarGateClient $client): void
+    {
+        if (isset($this->clients[$clientName])) {
+            return;
+        }
+
+        $event = new ClientCreationEvent($client, $this);
+        $event->call();
+
+        if ($event->isCancelled()) {
+            return;
+        }
+        if ($this->autoStart) {
+            $client->connect();
+        }
+        $this->clients[$clientName] = $client;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTickInterval(): int
+    {
+        return $this->tickInterval;
+    }
+
+    public function getClient(string $clientName): ?StarGateClient
+    {
+        return $this->clients[$clientName] ?? null;
+    }
+
+    /**
+     * @return StarGateClient|null
+     */
+    public function getDefaultClient(): ?StarGateClient
+    {
+        return $this->getClient($this->defaultClient);
+    }
+
+    /**
+     * @return StarGateClient[]
+     */
+    public function getClients(): array
+    {
+        return $this->clients;
+    }
+
+    /**
+     * @param int $logLevel
+     */
+    public function setLogLevel(int $logLevel): void
+    {
+        $this->logLevel = $logLevel;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLogLevel(): int
+    {
+        return $this->logLevel;
+    }
+
+    /**
+     * Transfer player to another server.
+     * @param Player $player instance to be transferred.
+     * @param string $targetServer server where player will be sent.
+     * @param string|null $clientName client name that will be used.
+     */
+    public function transferPlayer(Player $player, string $targetServer, ?string $clientName = null): void
+    {
+        $client = $this->getClient($clientName ?? $this->defaultClient);
+        if ($client === null) {
+            return;
+        }
+        $packet = new ServerTransferPacket();
+        $packet->setPlayerName($player->getName());
+        $packet->setTargetServer($targetServer);
+        $client->sendPacket($packet);
+    }
+
+    /**
+     * Get info about another server or master server.
+     * @param string $serverName name of server that info will be send. In selfMode it can be custom.
+     * @param bool $selfMode if send info of master server, StarGate server.
+     * @param string|null $clientName client name that will be used.
+     * @return PacketResponse|null future that can be used to get response data.
+     */
+    public function serverInfo(string $serverName, bool $selfMode, ?string $clientName = null): ?PacketResponse
+    {
+        $client = $this->getClient($clientName ?? $this->defaultClient);
+        if ($client === null) {
+            return null;
+        }
+        $packet = new ServerInfoRequestPacket();
+        $packet->setServerName($serverName);
+        $packet->setSelfInfo($selfMode);
+        return $client->responsePacket($packet);
+    }
 }

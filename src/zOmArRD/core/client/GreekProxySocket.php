@@ -35,33 +35,70 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\events;
+namespace zOmArRD\core\client;
 
-use pocketmine\event\Listener;
-use pocketmine\event\server\DataPacketReceiveEvent as DPRE;
-use pocketmine\network\mcpe\protocol\EmotePacket;
-use pocketmine\network\mcpe\protocol\LoginPacket;
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
-use pocketmine\Server;
+use Exception;
+use RuntimeException;
+use function socket_create;
+use function socket_last_error;
+use function socket_strerror;
+use const AF_INET;
+use const SOCK_STREAM;
+use const SOL_TCP;
 
-class DataPacketListener implements Listener
+class GreekProxySocket
 {
+
+    /** @var GreekProxyConnection */
+    private $conn;
+
+    /** @var string */
+    private $address;
+    /** @var int */
+    private $port;
+    /** @var string */
+
     /**
-     * @param DPRE $ev
+     * GreekProxySocket constructor.
+     * @param GreekProxyConnection $conn
+     * @param string $address
+     * @param int $port
      */
-    public function onDPRE(DPRE $ev): void
+    public function __construct(GreekProxyConnection $conn, string $address, int $port)
     {
-        $pk = $ev->getPacket();
+        $this->conn = $conn;
+        $this->address = $address;
+        $this->port = $port;
+    }
 
-        if ($pk instanceof LoginPacket) {
-            if ($pk->protocol != ProtocolInfo::CURRENT_PROTOCOL and in_array($pk->protocol, [407, 418, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425])) {
-                $pk->protocol = ProtocolInfo::CURRENT_PROTOCOL;
+    /**
+     * @return bool
+     */
+    public function connect(): bool
+    {
+        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        try {
+            if ($socket === false) {
+                throw new RuntimeException(socket_strerror(socket_last_error()));
             }
+            if (!@socket_connect($socket, $this->address, $this->port)) {
+                throw new RuntimeException(socket_strerror(socket_last_error()));
+            }
+
+            socket_set_nonblock($socket);
+            socket_set_option($socket, SOL_TCP, TCP_NODELAY, 1);
+        } catch (Exception $e) {
+            $this->conn->getLogger()->error("Can not connect to StarGate server!");
+            $this->conn->getLogger()->logException($e);
+            return false;
         }
 
-        if ($pk instanceof EmotePacket) {
-            $emoteId = $pk->getEmoteId();
-            Server::getInstance()->broadcastPacket($ev->getPlayer()->getViewers(), EmotePacket::create($ev->getPlayer()->getId(), $emoteId, 1 << 0));
-        }
+        $this->conn->socket = $socket;
+        return true;
+    }
+
+    public function close(): void
+    {
+        socket_close($this->conn->socket);
     }
 }

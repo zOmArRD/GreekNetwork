@@ -35,33 +35,64 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\events;
+namespace zOmArRD\core\protocol;
 
-use pocketmine\event\Listener;
-use pocketmine\event\server\DataPacketReceiveEvent as DPRE;
-use pocketmine\network\mcpe\protocol\EmotePacket;
-use pocketmine\network\mcpe\protocol\LoginPacket;
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
-use pocketmine\Server;
+use zOmArRD\core\codec\GreekProxyPacketHandler;
+use zOmArRD\core\codec\GreekProxyPackets;
+use zOmArRD\core\protocol\types\HandshakeData;
+use zOmArRD\core\utils\LogLevel;
 
-class DataPacketListener implements Listener
+class HandshakePacket extends GreekProxyPacket
 {
-    /**
-     * @param DPRE $ev
-     */
-    public function onDPRE(DPRE $ev): void
+
+    /** @var HandshakeData */
+    private $handshakeData;
+
+    public function encodePayload(): void
     {
-        $pk = $ev->getPacket();
+        HandshakeData::encodeData($this, $this->handshakeData);
+    }
 
-        if ($pk instanceof LoginPacket) {
-            if ($pk->protocol != ProtocolInfo::CURRENT_PROTOCOL and in_array($pk->protocol, [407, 418, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425])) {
-                $pk->protocol = ProtocolInfo::CURRENT_PROTOCOL;
-            }
-        }
+    public function decodePayload(): void
+    {
+        $this->handshakeData = HandshakeData::decodeData($this);
+    }
 
-        if ($pk instanceof EmotePacket) {
-            $emoteId = $pk->getEmoteId();
-            Server::getInstance()->broadcastPacket($ev->getPlayer()->getViewers(), EmotePacket::create($ev->getPlayer()->getId(), $emoteId, 1 << 0));
-        }
+    /**
+     * @param GreekProxyPacketHandler $handler
+     * @return bool
+     */
+    public function handle(GreekProxyPacketHandler $handler): bool
+    {
+        return $handler->handleHandshake($this);
+    }
+
+    public function getPacketId(): int
+    {
+        return GreekProxyPackets::HANDSHAKE_PACKET;
+    }
+
+    /**
+     * @param HandshakeData $handshakeData
+     */
+    public function setHandshakeData(HandshakeData $handshakeData): void
+    {
+        $this->handshakeData = $handshakeData;
+    }
+
+    /**
+     * @return HandshakeData
+     */
+    public function getHandshakeData(): HandshakeData
+    {
+        return $this->handshakeData;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLogLevel(): int
+    {
+        return LogLevel::LEVEL_ALL;
     }
 }

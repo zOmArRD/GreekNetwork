@@ -35,26 +35,45 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\addons;
 
-use pocketmine\network\mcpe\protocol\ScriptCustomEventPacket;
-use pocketmine\Player;
-use pocketmine\utils\Binary;
-use zOmArRD\core\providers\BungeeCord;
+namespace zOmArRD\core\handler;
 
-class BungeeExtension implements BungeeCord
+use zOmArRD\core\protocol\PingPacket;
+use zOmArRD\core\protocol\PongPacket;
+use zOmArRD\core\protocol\ReconnectPacket;
+
+class ConnectedPacketHandler extends SessionHandler
 {
+
     /**
-     * @param Player $player
-     * @param string $server
+     * @param PingPacket $packet
      * @return bool
      */
-    public function transferPlayer(Player $player, string $server): bool
+    public function handlePing(PingPacket $packet): bool
     {
-        $pk = new ScriptCustomEventPacket();
-        $pk->eventName = "bungeecord:main";
-        $pk->eventData = Binary::writeShort(strlen("Connect")) . "Connect" . Binary::writeShort(strlen($server)) . $server;
-        $player->sendDataPacket($pk);
+        $pongPacket = new PongPacket();
+        $pongPacket->setPingTime($packet->getPingTime());
+        $this->session->sendPacket($pongPacket);
+        return true;
+    }
+
+    /**
+     * @param PongPacket $packet
+     * @return bool
+     */
+    public function handlePong(PongPacket $packet): bool
+    {
+        $this->session->onPongReceive($packet);
+        return true;
+    }
+
+    /**
+     * @param ReconnectPacket $packet
+     * @return bool
+     */
+    public function handleReconnect(ReconnectPacket $packet): bool
+    {
+        $this->session->reconnect($packet->getReason(), false);
         return true;
     }
 }

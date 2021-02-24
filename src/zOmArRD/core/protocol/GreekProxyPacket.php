@@ -35,33 +35,74 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\events;
 
-use pocketmine\event\Listener;
-use pocketmine\event\server\DataPacketReceiveEvent as DPRE;
-use pocketmine\network\mcpe\protocol\EmotePacket;
-use pocketmine\network\mcpe\protocol\LoginPacket;
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
-use pocketmine\Server;
+namespace zOmArRD\core\protocol;
 
-class DataPacketListener implements Listener
+use zOmArRD\core\codec\GreekProxyPacketHandler;
+use zOmArRD\core\utils\LogLevel;
+use pocketmine\utils\BinaryStream;
+
+abstract class GreekProxyPacket extends BinaryStream
 {
+
+    /** @var int */
+    private $responseId;
+
+    abstract public function encodePayload(): void;
+
+    abstract public function decodePayload(): void;
+
     /**
-     * @param DPRE $ev
+     * @param GreekProxyPacketHandler $handler
+     * @return bool
      */
-    public function onDPRE(DPRE $ev): void
+    public function handle(GreekProxyPacketHandler $handler): bool
     {
-        $pk = $ev->getPacket();
+        return false;
+    }
 
-        if ($pk instanceof LoginPacket) {
-            if ($pk->protocol != ProtocolInfo::CURRENT_PROTOCOL and in_array($pk->protocol, [407, 418, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425])) {
-                $pk->protocol = ProtocolInfo::CURRENT_PROTOCOL;
-            }
-        }
+    /**
+     * @return int
+     */
+    abstract public function getPacketId(): int;
 
-        if ($pk instanceof EmotePacket) {
-            $emoteId = $pk->getEmoteId();
-            Server::getInstance()->broadcastPacket($ev->getPlayer()->getViewers(), EmotePacket::create($ev->getPlayer()->getId(), $emoteId, 1 << 0));
-        }
+    /**
+     * @param int $responseId
+     */
+    public function setResponseId(int $responseId): void
+    {
+        $this->responseId = $responseId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getResponseId(): int
+    {
+        return $this->responseId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function sendsResponse(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isResponse(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLogLevel(): int
+    {
+        return LogLevel::LEVEL_FILTERED;
     }
 }

@@ -141,4 +141,23 @@ class PlayerUtils
             $floating->sendText($text6, $player, "§fnavigate to our servers.");
         }
     }
+
+    public static function sendFloatingText03(Player $player): void
+    {
+        $floating = Extensions::FloatingText();
+
+        if ($player instanceof Player) {
+            $text1 = $floating->createText(new Vector3(-45.50, 95.20, 11.50));
+            $text2 = $floating->createText(new Vector3(-45.50, 94.50, 11.50));
+
+            $text3 = $floating->createText(new Vector3(-46.50, 95.20, 4.50));
+            $text4 = $floating->createText(new Vector3(-46.50, 94.50, 4.50));
+
+            $floating->sendText($text1, $player, "§l§6Greek §7| §r§aHCF §7(NA)");
+            $floating->sendText($text2, $player, "§dtap to join");
+
+            $floating->sendText($text3, $player, "§l§6Greek §7| §r§aPractice §7(NA/EU)");
+            $floating->sendText($text4, $player, "§dtap to join");
+        }
+    }
 }

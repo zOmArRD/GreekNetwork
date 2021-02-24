@@ -35,33 +35,76 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\events;
 
-use pocketmine\event\Listener;
-use pocketmine\event\server\DataPacketReceiveEvent as DPRE;
-use pocketmine\network\mcpe\protocol\EmotePacket;
-use pocketmine\network\mcpe\protocol\LoginPacket;
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
-use pocketmine\Server;
+namespace zOmArRD\core\protocol;
 
-class DataPacketListener implements Listener
+use zOmArRD\core\codec\GreekProxyPacketHandler;
+use zOmArRD\core\codec\GreekProxyPackets;
+use zOmArRD\core\protocol\types\PacketHelper;
+
+class ServerTransferPacket extends GreekProxyPacket
 {
-    /**
-     * @param DPRE $ev
-     */
-    public function onDPRE(DPRE $ev): void
+
+    /** @var string */
+    private $playerName;
+    /** @var string */
+    private $targetServer;
+
+    public function encodePayload(): void
     {
-        $pk = $ev->getPacket();
+        PacketHelper::writeString($this, $this->playerName);
+        PacketHelper::writeString($this, $this->targetServer);
+    }
 
-        if ($pk instanceof LoginPacket) {
-            if ($pk->protocol != ProtocolInfo::CURRENT_PROTOCOL and in_array($pk->protocol, [407, 418, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425])) {
-                $pk->protocol = ProtocolInfo::CURRENT_PROTOCOL;
-            }
-        }
+    public function decodePayload(): void
+    {
+        $this->playerName = PacketHelper::readString($this);
+        $this->targetServer = PacketHelper::readString($this);
+    }
 
-        if ($pk instanceof EmotePacket) {
-            $emoteId = $pk->getEmoteId();
-            Server::getInstance()->broadcastPacket($ev->getPlayer()->getViewers(), EmotePacket::create($ev->getPlayer()->getId(), $emoteId, 1 << 0));
-        }
+    /**
+     * @param GreekProxyPacketHandler $handler
+     * @return bool
+     */
+    public function handle(GreekProxyPacketHandler $handler): bool
+    {
+        return $handler->handleServerTransfer($this);
+    }
+
+    public function getPacketId(): int
+    {
+        return GreekProxyPackets::SERVER_TRANSFER_PACKET;
+    }
+
+    /**
+     * @param string $playerName
+     */
+    public function setPlayerName(string $playerName): void
+    {
+        $this->playerName = $playerName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlayerName(): string
+    {
+        return $this->playerName;
+    }
+
+    /**
+     * @param string $targetServer
+     */
+    public function setTargetServer(string $targetServer): void
+    {
+        $this->targetServer = $targetServer;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetServer(): string
+    {
+        return $this->targetServer;
     }
 }

@@ -35,33 +35,56 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\events;
 
-use pocketmine\event\Listener;
-use pocketmine\event\server\DataPacketReceiveEvent as DPRE;
-use pocketmine\network\mcpe\protocol\EmotePacket;
-use pocketmine\network\mcpe\protocol\LoginPacket;
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
-use pocketmine\Server;
+namespace zOmArRD\core\utils;
 
-class DataPacketListener implements Listener
+use Closure;
+use Exception;
+
+class GreekProxyFuture
 {
+
+
     /**
-     * @param DPRE $ev
+     * Closure should accept two parameters.
+     * closure(result, exception)
+     * @var Closure[]
      */
-    public function onDPRE(DPRE $ev): void
+    private $closures = [];
+
+    /**
+     * @param mixed $response
+     */
+    public function complete($response): void
     {
-        $pk = $ev->getPacket();
-
-        if ($pk instanceof LoginPacket) {
-            if ($pk->protocol != ProtocolInfo::CURRENT_PROTOCOL and in_array($pk->protocol, [407, 418, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425])) {
-                $pk->protocol = ProtocolInfo::CURRENT_PROTOCOL;
-            }
+        if (empty($this->closures)) {
+            return;
         }
 
-        if ($pk instanceof EmotePacket) {
-            $emoteId = $pk->getEmoteId();
-            Server::getInstance()->broadcastPacket($ev->getPlayer()->getViewers(), EmotePacket::create($ev->getPlayer()->getId(), $emoteId, 1 << 0));
+        foreach ($this->closures as $closure) {
+            $closure($response, null);
         }
+    }
+
+    /**
+     * @param Exception $e
+     */
+    public function completeExceptionally(Exception $e): void
+    {
+        if (empty($this->closures)) {
+            return;
+        }
+
+        foreach ($this->closures as $closure) {
+            $closure(null, $e);
+        }
+    }
+
+    /**
+     * @param Closure $closure
+     */
+    public function whenComplete(Closure $closure): void
+    {
+        $this->closures[] = $closure;
     }
 }

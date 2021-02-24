@@ -37,7 +37,6 @@ declare(strict_types=1);
  */
 namespace zOmArRD\core\events;
 
-use Cassandra\Set;
 use pocketmine\event\entity\EntityDamageEvent as EDE;
 use pocketmine\event\inventory\InventoryTransactionEvent as ITE;
 use pocketmine\event\Listener;
@@ -52,8 +51,6 @@ use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\mysql\AsyncQueue;
 use zOmArRD\core\mysql\InsertQuery;
 use zOmArRD\core\utils\PlayerUtils;
-//Use the class
-use SunProxy\SunProxyAPI\SunProxyAPI;
 
 class PlayerListener implements Listener
 {
@@ -70,9 +67,10 @@ class PlayerListener implements Listener
         PlayerUtils::onPJE($player);
         PlayerUtils::sendSC($player);
         PlayerUtils::giveItems($player);
-        PlayerUtils::sendFloatingText02($player);
 
-        /** Mysql no touch :v */
+        PlayerUtils::sendFloatingText02($player);
+        PlayerUtils::sendFloatingText03($player);
+
         AsyncQueue::submitQuery(new InsertQuery("UPDATE servers SET players = players+1 WHERE server='{$server}'"));
 
         $player->teleport(new Position(Settings::$x, Settings::$y, Settings::$z, GreekNetwork::getInstance()->getServer()->getLevelByName(Settings::$lobby)));
@@ -120,7 +118,6 @@ class PlayerListener implements Listener
         }
         if ($e->getMessage() === "hcf1") {
             $player = $e->getPlayer();
-            SunProxyAPI::FastTransferPlayer($player, "104.128.48.53", (int)19209);
         }
         $pl_name = $e->getPlayer()->getName();
         $message = $e->getMessage();
