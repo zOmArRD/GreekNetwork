@@ -22,8 +22,15 @@ class EntityListener implements Listener
             if ($damager instanceof Player) {
                 switch ($entity->getSkin()->getSkinId()) {
                     case "hcf":
+<<<<<<< HEAD
                         break;
                     case "practice":
+=======
+                        Extensions::BungeeCord()->transferPlayer($damager, "hcf1");
+                        break;
+                    case "practice":
+                        Extensions::BungeeCord()->transferPlayer($damager, "practice1");
+>>>>>>> origin/master
                         break;
                 }
                 $e->setCancelled();
@@ -37,7 +44,11 @@ class EntityListener implements Listener
     {
         $player = $e->getPlayer();
 
+<<<<<<< HEAD
         if ($e->getPacket() instanceof InventoryTransactionPacket) {
+=======
+        if ($e->getPacket() instanceof InventoryTransactionPacket){
+>>>>>>> origin/master
             try {
                 $action = $e->getPacket()->trData->actionType == InventoryTransactionPacket::USE_ITEM_ON_ENTITY_ACTION_INTERACT;
             } catch (\ErrorException $e) {
@@ -49,11 +60,21 @@ class EntityListener implements Listener
                 } catch (\ErrorException $e) {
                     return;
                 }
+<<<<<<< HEAD
                 if ($target instanceof Npc) {
                     switch ($target->getSkin()->getSkinId()) {
                         case "hcf":
                             break;
                         case "practice":
+=======
+                if ($target instanceof Npc){
+                    switch ($target->getSkin()->getSkinId()){
+                        case "hcf":
+                            Extensions::BungeeCord()->transferPlayer($player, "hcf1");
+                            break;
+                        case "practice":
+                            Extensions::BungeeCord()->transferPlayer($player, "practice1");
+>>>>>>> origin/master
                             break;
                         default:
                             return;
