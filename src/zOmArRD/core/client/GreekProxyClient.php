@@ -41,11 +41,11 @@ use zOmArRD\core\codec\ProtocolCodec;
 use zOmArRD\core\events\ClientAuthenticatedEvent;
 use zOmArRD\core\events\ClientConnectedEvent;
 use zOmArRD\core\events\ClientDisconnectedEvent;
+use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\handler\SessionHandler;
 use zOmArRD\core\protocol\DisconnectPacket;
 use zOmArRD\core\protocol\GreekProxyPacket;
 use zOmArRD\core\protocol\types\HandshakeData;
-use zOmArRD\core\StarGateAtlantis;
 
 use zOmArRD\core\utils\PacketResponse;
 use pocketmine\plugin\PluginLogger;
@@ -55,7 +55,7 @@ use pocketmine\Server;
 class GreekProxyClient extends Task
 {
 
-    /** @var StarGateAtlantis */
+    /** @var GreekNetwork  */
     private $loader;
     /** @var Server */
     private $server;
@@ -83,9 +83,9 @@ class GreekProxyClient extends Task
      * @param string $address
      * @param int $port
      * @param HandshakeData $handshakeData
-     * @param StarGateAtlantis $plugin
+     * @param GreekNetwork $plugin
      */
-    public function __construct(string $address, int $port, HandshakeData $handshakeData, StarGateAtlantis $plugin)
+    public function __construct(string $address, int $port, HandshakeData $handshakeData, GreekNetwork $plugin)
     {
         $this->loader = $plugin;
         $this->server = $plugin->getServer();
