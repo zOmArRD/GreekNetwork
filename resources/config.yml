@@ -68,4 +68,15 @@ defaultClient: "lobby1"
 # Start clients after plugin is enabled.
 # Disabling auto start will allow plugins to trigger connection manually.
 autoStart: true
+
+
+#########################
+#  Ranks System Config  #
+#########################
+tag2: true
+tag1: true
+customtag: true
+maximum_custom_tag_length: 20
+maximum_nick_length: 20
+convertdata: false # Converts data from yml to mysql.
 ...

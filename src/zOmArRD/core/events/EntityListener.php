@@ -8,7 +8,6 @@ use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketReceiveEvent as DPRE;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 use pocketmine\Player;
-use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\utils\Npc;
 
 class EntityListener implements Listener
@@ -22,15 +21,10 @@ class EntityListener implements Listener
             if ($damager instanceof Player) {
                 switch ($entity->getSkin()->getSkinId()) {
                     case "hcf":
-<<<<<<< HEAD
+                        //T
                         break;
                     case "practice":
-=======
-                        Extensions::BungeeCord()->transferPlayer($damager, "hcf1");
-                        break;
-                    case "practice":
-                        Extensions::BungeeCord()->transferPlayer($damager, "practice1");
->>>>>>> origin/master
+                        //B
                         break;
                 }
                 $e->setCancelled();
@@ -44,40 +38,32 @@ class EntityListener implements Listener
     {
         $player = $e->getPlayer();
 
-<<<<<<< HEAD
+
         if ($e->getPacket() instanceof InventoryTransactionPacket) {
-=======
-        if ($e->getPacket() instanceof InventoryTransactionPacket){
->>>>>>> origin/master
-            try {
-                $action = $e->getPacket()->trData->actionType == InventoryTransactionPacket::USE_ITEM_ON_ENTITY_ACTION_INTERACT;
-            } catch (\ErrorException $e) {
-                return;
-            }
-            if ($action) {
+
+            if ($e->getPacket() instanceof InventoryTransactionPacket) {
+
                 try {
-                    $target = $e->getPlayer()->level->getEntity($e->getPacket()->trData->entityRuntimeId);
+                    $action = $e->getPacket()->trData->actionType == InventoryTransactionPacket::USE_ITEM_ON_ENTITY_ACTION_INTERACT;
                 } catch (\ErrorException $e) {
                     return;
                 }
-<<<<<<< HEAD
-                if ($target instanceof Npc) {
-                    switch ($target->getSkin()->getSkinId()) {
-                        case "hcf":
-                            break;
-                        case "practice":
-=======
-                if ($target instanceof Npc){
-                    switch ($target->getSkin()->getSkinId()){
-                        case "hcf":
-                            Extensions::BungeeCord()->transferPlayer($player, "hcf1");
-                            break;
-                        case "practice":
-                            Extensions::BungeeCord()->transferPlayer($player, "practice1");
->>>>>>> origin/master
-                            break;
-                        default:
-                            return;
+                if ($action) {
+                    try {
+                        $target = $e->getPlayer()->level->getEntity($e->getPacket()->trData->entityRuntimeId);
+                    } catch (\ErrorException $e) {
+                        return;
+                    }
+
+                    if ($target instanceof Npc) {
+                        switch ($target->getSkin()->getSkinId()) {
+                            case "hcf":
+                                //NOthing
+                                break;
+                            case "practice":
+                                //Todo
+                                break;
+                        }
                     }
                 }
             }

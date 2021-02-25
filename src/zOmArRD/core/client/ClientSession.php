@@ -45,7 +45,6 @@ use zOmArRD\core\protocol\PingPacket;
 use zOmArRD\core\protocol\PongPacket;
 use zOmArRD\core\protocol\GreekProxyPacket;
 use zOmArRD\core\protocol\types\PingEntry;
-use zOmArRD\core\utils\LogLevel;
 use zOmArRD\core\utils\PacketResponse;
 use zOmArRD\core\utils\GreekProxyException;
 use zOmArRD\core\utils\GreekProxyFuture;
@@ -53,7 +52,6 @@ use Exception;
 use pocketmine\plugin\PluginLogger;
 use function get_class;
 use function microtime;
-use function var_dump;
 
 class ClientSession
 {

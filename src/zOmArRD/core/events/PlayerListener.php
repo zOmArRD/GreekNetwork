@@ -112,13 +112,6 @@ class PlayerListener implements Listener
      */
     public function onPCE(PCE $e)
     {
-        if ($e->getMessage() === "hcf") {
-            $player = $e->getPlayer();
-            Extensions::BungeeCord()->transferPlayer($player, "hcf");
-        }
-        if ($e->getMessage() === "hcf1") {
-            $player = $e->getPlayer();
-        }
         $pl_name = $e->getPlayer()->getName();
         $message = $e->getMessage();
         $e->setFormat("§6" . $pl_name . "§7: " . $message);

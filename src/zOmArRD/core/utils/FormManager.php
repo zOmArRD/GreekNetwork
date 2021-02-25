@@ -40,6 +40,7 @@ namespace zOmArRD\core\utils;
 use pocketmine\Player;
 use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\apis\form\SimpleForm;
+use zOmArRD\core\GreekNetwork;
 
 class FormManager
 {
@@ -49,10 +50,11 @@ class FormManager
             if (!is_null($data)) {
                 switch ($data) {
                     case 0:
-                        Extensions::BungeeCord()->transferPlayer($player, "hcf1", "hcf1");
+                        //Extensions::BungeeCord()->transferPlayer($player, "hcf1", "hcf1");
+                        GreekNetwork::getInstance()->transferPlayer($player, "hcf1");
                         break;
                     case 1:
-                        Extensions::BungeeCord()->transferPlayer($player, "hcf1");
+                        //Extensions::BungeeCord()->transferPlayer($player, "hcf1");
                         break;
                 }
             }

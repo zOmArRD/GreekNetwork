@@ -120,15 +120,6 @@ class Extensions
 
     }
 
-
-    /**
-     * @return GreekProxy
-     */
-    public static function BungeeCord(): GreekProxy
-    {
-        return new GreekProxy();
-    }
-
     /**
      * @return ScoreExtension
      */

@@ -38,13 +38,18 @@ declare(strict_types=1);
 namespace zOmArRD\core;
 
 use pocketmine\network\mcpe\protocol\types\SkinAdapterSingleton;
+use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\MainLogger;
 use pocketmine\utils\TextFormat as TE;
 use zOmArRD\core\addons\Extensions;
+use zOmArRD\core\client\GreekProxyClient;
 use zOmArRD\core\command\GreekCommand;
 use zOmArRD\core\config\Settings;
+use zOmArRD\core\events\ClientCreationEvent;
 use zOmArRD\core\protocol\ServerInfoRequestPacket;
+use zOmArRD\core\protocol\ServerTransferPacket;
+use zOmArRD\core\protocol\types\HandshakeData;
 use zOmArRD\core\server\ServerManager;
 use zOmArRD\core\utils\PacketResponse;
 use zOmArRD\core\utils\PersonaSkinAdapter;
@@ -87,6 +92,8 @@ final class GreekNetwork extends PluginBase
     {
         return self::$instance;
     }
+
+
 
     public function onLoad(): void
     {
@@ -154,6 +161,7 @@ final class GreekNetwork extends PluginBase
             Extensions::BungeeCord()->transferPlayer($players, "hcf1");
         }*/
 
+
         foreach ($this->clients as $client) {
             $client->shutdown();
         }
@@ -183,16 +191,16 @@ final class GreekNetwork extends PluginBase
         }
 
         $config = $this->getConfig()->get("connections")[$clientName];
-        $handshakeData = new HandshakeData($clientName, $config["password"], HandshakeData::SOFTWARE_POCKETMINE, self::STARGATE_VERSION);
-        $client = new StarGateClient($config["address"], (int)$config["port"], $handshakeData, $this);
+        $handshakeData = new HandshakeData($clientName, $config["password"], HandshakeData::SOFTWARE_POCKETMINE, self::CONFIG_VERSION);
+        $client = new GreekProxyClient($config["address"], (int)$config["port"], $handshakeData, $this);
         $this->onClientCreation($clientName, $client);
     }
 
     /**
      * @param string $clientName
-     * @param StarGateClient $client
+     * @param GreekProxyClient $client
      */
-    public function onClientCreation(string $clientName, StarGateClient $client): void
+    public function onClientCreation(string $clientName, GreekProxyClient $client): void
     {
         if (isset($this->clients[$clientName])) {
             return;
@@ -218,21 +226,21 @@ final class GreekNetwork extends PluginBase
         return $this->tickInterval;
     }
 
-    public function getClient(string $clientName): ?StarGateClient
+    public function getClient(string $clientName): ?GreekProxyClient
     {
         return $this->clients[$clientName] ?? null;
     }
 
     /**
-     * @return StarGateClient|null
+     * @return GreekProxyClient|null
      */
-    public function getDefaultClient(): ?StarGateClient
+    public function getDefaultClient(): ?GreekProxyClient
     {
         return $this->getClient($this->defaultClient);
     }
 
     /**
-     * @return StarGateClient[]
+     * @return GreekProxyClient[]
      */
     public function getClients(): array
     {
