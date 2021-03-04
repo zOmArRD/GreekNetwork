@@ -119,7 +119,7 @@ class ClientSession
                     $this->onPacket($packet);
                 }
             } catch (Exception $e) {
-                $this->getLogger()->error("§cCan not decode StarGate packet!");
+                $this->getLogger()->error("§cCan not decode GreekProxy packet!");
                 $this->getLogger()->logException($e);
             }
         }
@@ -203,7 +203,7 @@ class ClientSession
                 $this->connection->writeBuffer($payload);
             }
         } catch (Exception $e) {
-            $this->getLogger()->error("§cCan not encode StarGate packet " . get_class($packet) . "!");
+            $this->getLogger()->error("§cCan not encode GreekProxy packet " . get_class($packet) . "!");
             $this->getLogger()->logException($e);
             return;
         }
@@ -250,7 +250,7 @@ class ClientSession
      */
     public function onDisconnect(string $reason): void
     {
-        $this->getLogger()->info("§bStarGate server has been disconnected! Reason: " . $reason);
+        $this->getLogger()->info("§bGreekProxy server has been disconnected! Reason: " . $reason);
         $this->client->onSessionDisconnected();
         $this->close();
     }
