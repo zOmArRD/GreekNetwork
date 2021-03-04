@@ -88,7 +88,7 @@ class GreekProxySocket
             socket_set_nonblock($socket);
             socket_set_option($socket, SOL_TCP, TCP_NODELAY, 1);
         } catch (Exception $e) {
-            $this->conn->getLogger()->error("Can not connect to StarGate server!");
+            $this->conn->getLogger()->error("Can not connect to GreekProxy server!");
             $this->conn->getLogger()->logException($e);
             return false;
         }

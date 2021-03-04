@@ -93,8 +93,6 @@ final class GreekNetwork extends PluginBase
         return self::$instance;
     }
 
-
-
     public function onLoad(): void
     {
         $logger = $this->getServer()->getLogger();
@@ -226,6 +224,10 @@ final class GreekNetwork extends PluginBase
         return $this->tickInterval;
     }
 
+    /**
+     * @param string $clientName
+     * @return GreekProxyClient|null
+     */
     public function getClient(string $clientName): ?GreekProxyClient
     {
         return $this->clients[$clientName] ?? null;

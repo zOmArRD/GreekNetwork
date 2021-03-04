@@ -256,7 +256,7 @@ class GreekProxyConnection extends Thread
             return;
         }
         $this->state = self::STATE_DISCONNECTED;
-        $this->logger->debug("Closed StarGate session " . $this->address);
+        $this->logger->debug("Closed GreekProxy session " . $this->address);
     }
 
     public function shutdown(): void
