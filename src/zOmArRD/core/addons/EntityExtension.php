@@ -13,6 +13,14 @@ use zOmArRD\core\utils\Npc;
 
 class EntityExtension implements API
 {
+    /**
+     * @param string $name
+     * @param float $x
+     * @param float $y
+     * @param float $z
+     * @param Level $level
+     * @param Player $player
+     */
     public function spawnEntity(string $name, float $x, float $y, float $z, Level $level, Player $player): void
     {
         foreach ($level->getEntities() as $entity){
@@ -34,4 +42,6 @@ class EntityExtension implements API
         $human->pitch = $player->getPitch();
         $human->spawnToAll();
     }
+
+
 }
