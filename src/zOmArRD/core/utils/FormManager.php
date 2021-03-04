@@ -54,7 +54,7 @@ class FormManager
                         GreekNetwork::getInstance()->transferPlayer($player, "hcf1");
                         break;
                     case 1:
-                        //Extensions::BungeeCord()->transferPlayer($player, "hcf1");
+                        GreekNetwork::getInstance()->transferPlayer($player, "practice1");
                         break;
                 }
             }

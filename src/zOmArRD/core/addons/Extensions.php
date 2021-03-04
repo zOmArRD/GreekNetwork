@@ -38,7 +38,6 @@ declare(strict_types=1);
 namespace zOmArRD\core\addons;
 
 use pocketmine\entity\Entity;
-use pocketmine\Player;
 use pocketmine\utils\Config;
 use zOmArRD\core\apis\text\FloatingTextAPI;
 use zOmArRD\core\command\GreekCommand;
@@ -50,7 +49,6 @@ use zOmArRD\core\events\PlayerListener;
 use zOmArRD\core\events\WorldListener;
 use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\mysql\Mysql;
-use zOmArRD\core\proxy\GreekProxy;
 use zOmArRD\core\task\ServersScheluder;
 use zOmArRD\core\task\ServerSyncTask;
 use zOmArRD\core\utils\Npc;
