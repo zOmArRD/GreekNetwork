@@ -37,6 +37,7 @@ declare(strict_types=1);
  */
 namespace zOmArRD\core\utils;
 
+use Exception;
 use pocketmine\entity\Skin;
 use pocketmine\network\mcpe\protocol\types\LegacySkinAdapter;
 use pocketmine\network\mcpe\protocol\types\SkinData;
@@ -50,7 +51,7 @@ class PersonaSkinAdapter extends LegacySkinAdapter
     /**.
      * @param SkinData $data
      * @return Skin
-     * @throws \Exception
+     * @throws Exception
      */
     public function fromSkinData(SkinData $data): Skin
     {

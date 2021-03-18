@@ -8,6 +8,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketReceiveEvent as DPRE;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 use pocketmine\Player;
+use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\utils\Npc;
 
 class EntityListener implements Listener
@@ -16,15 +17,16 @@ class EntityListener implements Listener
     {
         $entity = $e->getEntity();
         $damager = $e->getDamager();
+        $error = "§cWe have not connected to the server, please try later";
 
         if ($entity instanceof Npc) {
             if ($damager instanceof Player) {
                 switch ($entity->getSkin()->getSkinId()) {
                     case "hcf":
-                        //T
+                        Extensions::getProxy()->transferPlayer($damager, "hcf");
                         break;
-                    case "practice":
-                        //B
+                    case "skywars":
+                        $damager->sendMessage($error);
                         break;
                 }
                 $e->setCancelled();
@@ -37,7 +39,7 @@ class EntityListener implements Listener
     public function onDPRE(DPRE $e): void
     {
         $player = $e->getPlayer();
-
+        $error = "§cWe have not connected to the server, please try later";
 
         if ($e->getPacket() instanceof InventoryTransactionPacket) {
 
@@ -57,11 +59,11 @@ class EntityListener implements Listener
 
                     if ($target instanceof Npc) {
                         switch ($target->getSkin()->getSkinId()) {
-                            case "hcf":
-                                //NOthing
+                            case "skywars":
+                                $player->sendMessage($error);
                                 break;
-                            case "practice":
-                                //Todo
+                            case "hcf":
+                                Extensions::getProxy()->transferPlayer($player, "hcf");
                                 break;
                         }
                     }

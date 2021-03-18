@@ -8,7 +8,7 @@ use pocketmine\command\CommandSender;
 class HelpSubCommand implements SubCommand
 {
 
-    public function executeSub(CommandSender $sender, array $args, string $name)
+    public function executeSub(CommandSender $sender, array $args, string $name): void
     {
         if (!isset($args[0])){
             $sender->sendMessage($this->getHelpPage($sender, 1));

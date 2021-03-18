@@ -41,11 +41,12 @@ use pocketmine\event\entity\EntityDamageEvent as EDE;
 use pocketmine\event\inventory\InventoryTransactionEvent as ITE;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent as PCE;
+use pocketmine\event\player\PlayerDeathEvent as PDE;
 use pocketmine\event\player\PlayerExhaustEvent as PEE;
 use pocketmine\event\player\PlayerJoinEvent as PJE;
+use pocketmine\event\player\PlayerPreLoginEvent as PPJE;
 use pocketmine\event\player\PlayerQuitEvent as PQE;
 use pocketmine\level\Position;
-use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\config\Settings;
 use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\mysql\AsyncQueue;
@@ -54,14 +55,31 @@ use zOmArRD\core\utils\PlayerUtils;
 
 class PlayerListener implements Listener
 {
+    /** @var GreekNetwork $plugin */
+    public $plugin;
+
+    public function __construct(GreekNetwork $plugin)
+    {
+        $this->plugin = $plugin;
+    }
+
+    public function onPPLE(PPJE $e): void
+    {
+
+    }
+
     /**
      * Function when Player join to the Server
      * @param PJE $e
      */
     public function onPJE(PJE $e): void
     {
+        /** @var  $player */
         $player = $e->getPlayer();
+
+        /** @var  $server */
         $server = Settings::$server;
+
 
         /** Necessary when player join */
         PlayerUtils::onPJE($player);
@@ -71,10 +89,10 @@ class PlayerListener implements Listener
         PlayerUtils::sendFloatingText02($player);
         PlayerUtils::sendFloatingText03($player);
 
-        AsyncQueue::submitQuery(new InsertQuery("UPDATE servers SET players = players+1 WHERE server='{$server}'"));
+        //AsyncQueue::submitQuery(new InsertQuery("UPDATE servers SET players = players+1 WHERE server='{$server}'"));
+
 
         $player->teleport(new Position(Settings::$x, Settings::$y, Settings::$z, GreekNetwork::getInstance()->getServer()->getLevelByName(Settings::$lobby)));
-        $player->setAllowFlight(true);
 
         $e->setJoinMessage(null);
         $player->sendMessage(Settings::$joinMessage);
@@ -88,7 +106,7 @@ class PlayerListener implements Listener
         $player = $e->getPlayer();
         $server = Settings::$server;
 
-        AsyncQueue::submitQuery(new InsertQuery("UPDATE servers SET players = players-1 WHERE server='{$server}'"));
+        //AsyncQueue::submitQuery(new InsertQuery("UPDATE servers SET players = players-1 WHERE server='{$server}'"));
 
         $e->setQuitMessage(null);
         $player->teleport(new Position(Settings::$x, Settings::$y, Settings::$z, GreekNetwork::getInstance()->getServer()->getLevelByName(Settings::$lobby)));
@@ -112,9 +130,7 @@ class PlayerListener implements Listener
      */
     public function onPCE(PCE $e)
     {
-        $pl_name = $e->getPlayer()->getName();
-        $message = $e->getMessage();
-        $e->setFormat("§6" . $pl_name . "§7: " . $message);
+        $e->setFormat("§6".$e->getPlayer()->getName() . ": §f". $e->getMessage());
     }
 
     /**
@@ -130,5 +146,13 @@ class PlayerListener implements Listener
                 $e->setCancelled(false);
             }
         }
+    }
+
+    /**
+     * @param PDE $e
+     */
+    public function player(PDE $e)
+    {
+        $e->setDeathMessage(null);
     }
 }

@@ -53,12 +53,6 @@ class DataPacketListener implements Listener
     {
         $pk = $ev->getPacket();
 
-        if ($pk instanceof LoginPacket) {
-            if ($pk->protocol != ProtocolInfo::CURRENT_PROTOCOL and in_array($pk->protocol, [407, 418, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425])) {
-                $pk->protocol = ProtocolInfo::CURRENT_PROTOCOL;
-            }
-        }
-
         if ($pk instanceof EmotePacket) {
             $emoteId = $pk->getEmoteId();
             Server::getInstance()->broadcastPacket($ev->getPlayer()->getViewers(), EmotePacket::create($ev->getPlayer()->getId(), $emoteId, 1 << 0));

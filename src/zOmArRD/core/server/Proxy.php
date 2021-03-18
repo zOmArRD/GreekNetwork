@@ -35,31 +35,63 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace zOmArRD\core\mysql;
+namespace zOmArRD\core\server;
 
-use zOmArRD\core\config\Settings;
-use zOmArRD\core\GreekNetwork;
+use pocketmine\network\mcpe\protocol\ScriptCustomEventPacket;
+use pocketmine\Player;
+use pocketmine\utils\Binary;
 
-class Mysql
+/**
+ * Class Proxy
+ * @package zOmArRD\core\server
+ */
+class Proxy
 {
-    public function onLoad(): void
+
+    /**
+     * @param Player $player
+     * @param string $server
+     * @return bool
+     */
+    public function transferPlayer(Player $player, string $server): bool
     {
-        if (Settings::$con->connect_error) {
-            GreekNetwork::getInstance()->getLogger()->error("Connection failed: " . Settings::$con->connect_error);
+        $pk = new ScriptCustomEventPacket();
+        $pk->eventName = "bungeecord:main";
+        $pk->eventData = Binary::writeShort(strlen("Connect")) . "Connect" . Binary::writeShort(strlen($server)) . $server;
+        $player->sendDataPacket($pk);
+        return true;
+    }
+
+    /**
+     * @param string $serverIP
+     * @param int $port
+     * @return int
+     */
+    public function getServerPlayers(string $serverIP, int $port): int
+    {
+        try {
+            $query = PMQuery::query($serverIP, $port);
+            $players = (int) $query['Players'];
+        }catch (PmQueryException $e) {
+            $players = -1;
         }
-        $server = Settings::$server;
-        Settings::$con->query("CREATE TABLE IF NOT EXISTS servers(server VARCHAR(100) UNIQUE, status INT, players INT)");
-        $res = Settings::$con->query("REPLACE INTO servers SET server = '{$server}', status = 1, players = 0;");
+        return $players;
     }
 
-    public function onDisable(): void
+    /**
+     * @param string $serverIP
+     * @param int $port
+     * @return int
+     */
+    public function getServerMaxPlayers(string $serverIP, int $port): int
     {
-        $server = Settings::$server;
-        AsyncQueue::submitQuery(new InsertQuery("UPDATE servers SET status = 0 WHERE server='{$server}'"));
+        try {
+            $query = PMQuery::query($serverIP, $port);
+            $players = (int) $query['MaxPlayers'];
+        }catch (PmQueryException $e) {
+            $players = 0;
+        }
+        return $players;
     }
 
-    public static function getCurrentServerName()
-    {
-        return Settings::$server;
-    }
 }

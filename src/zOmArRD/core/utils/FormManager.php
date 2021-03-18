@@ -41,33 +41,60 @@ use pocketmine\Player;
 use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\apis\form\SimpleForm;
 use zOmArRD\core\GreekNetwork;
+use zOmArRD\core\server\Proxy;
 
 class FormManager
 {
     public static function serverSelector(Player $player)
     {
+
         $form = new SimpleForm(function (Player $player, ?int $data) {
             if (!is_null($data)) {
+                $error = "§cWe have not connected to the server, please try later";
                 switch ($data) {
                     case 0:
-                        //Extensions::BungeeCord()->transferPlayer($player, "hcf1", "hcf1");
-                        GreekNetwork::getInstance()->transferPlayer($player, "hcf1");
+                        $player->sendMessage($error);
                         break;
                     case 1:
-                        GreekNetwork::getInstance()->transferPlayer($player, "practice1");
+                        Extensions::getProxy()->transferPlayer($player, "hcf");
+                        break;
+                    case 2:
                         break;
                 }
             }
         });
 
         $images = [
-            "close" => "textures/gui/newgui/mob_effects/strength_effect",
+            "strength" => "textures/gui/newgui/mob_effects/strength_effect",
+            "bow" => "textures/items/bow_pulling_1",
+            "close" => "textures/gui/newgui/anvil-crossout",
         ];
+
+        $cl = "§a";
+        $HCFPlayers = (new FormManager)->getProxy()->getServerPlayers("45.134.8.141", 19132);
+        $HCFMaxPlayer = (new FormManager)->getProxy()->getServerMaxPlayers("45.134.8.141", 19132);
+        if ($HCFPlayers !== null) {
+            $tagHCF = $cl . $HCFPlayers . "/" . $HCFMaxPlayer . " PLAYING";
+        } else {
+            $tagHCF = "§cOFFLINE";
+        }
+
+        $br = "\n";
         $form->setTitle("§l§7» §6Greek §8Network §7«");
         $form->setContent("§eSelect which server you want to transfer to");
 
-        $form->addButton("§l§6Greek §7| §r§aHCF", 0, $images['close']);
-        $form->addButton("§l§6Greek §7| §r§aPractice", 0, $images['close']);
+        $form->addButton("§l§6SkyWars §r§7(NA)" . $br . "§cOFFLINE", 0, $images['bow']);
+        $form->addButton("§l§dHCF §r§7(NA)" . $br . $tagHCF, 0, $images['strength']);
+        $form->addButton("§cClose", 0, $images["close"]);
         $player->sendForm($form);
+    }
+
+
+    /**
+     * @return Proxy
+     */
+    public function getProxy(): Proxy
+    {
+        return Extensions::getProxy();
     }
 }

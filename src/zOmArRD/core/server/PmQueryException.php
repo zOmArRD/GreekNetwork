@@ -35,12 +35,9 @@ declare(strict_types=1);
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+namespace zOmArRD\core\server;
 
-namespace zOmArRD\core\utils;
-
-use RuntimeException;
-
-class GreekProxyException extends RuntimeException
+class PmQueryException extends \Exception
 {
 
 }

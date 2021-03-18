@@ -32,10 +32,10 @@ general:
   gamemode: 2
 
   # Coords where player Teleport to join.
-  x: -71
-  y: 97
-  z: 12
-  lobby: "greek"
+  x: 0
+  y: 71
+  z: -10
+  lobby: "lobby"
 
 Mysql:
   # Mysql Credentials
@@ -46,37 +46,4 @@ Mysql:
   password: "!d@5$ZIVR!rA"
   database: "greek"
   server: lobby1
-
-# Greek Proxy Config
-# Supports more connections
-connections:
-  lobby1:
-    address: play.greekmc.net
-    port: 47007
-    password: RUlz5uBTdR
-
-# Change log level to log packets in debug mode.
-# Set to 0 for no packet logs.
-# Set to 1 to log packets except Ping, Pong and connection packets.
-# Set to 2 to log all packets.
-logLevel: 0
-# Interval in ticks to receive data from connection
-# Lower interval, faster packet decoding and encoding
-tickInterval: 2
-# Default client will be used if no clientName specified in api functions
-defaultClient: "lobby1"
-# Start clients after plugin is enabled.
-# Disabling auto start will allow plugins to trigger connection manually.
-autoStart: true
-
-
-#########################
-#  Ranks System Config  #
-#########################
-tag2: true
-tag1: true
-customtag: true
-maximum_custom_tag_length: 20
-maximum_nick_length: 20
-convertdata: false # Converts data from yml to mysql.
 ...

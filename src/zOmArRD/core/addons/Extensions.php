@@ -49,7 +49,9 @@ use zOmArRD\core\events\PlayerListener;
 use zOmArRD\core\events\WorldListener;
 use zOmArRD\core\GreekNetwork;
 use zOmArRD\core\mysql\Mysql;
-use zOmArRD\core\task\ServersScheluder;
+use zOmArRD\core\server\Proxy;
+use zOmArRD\core\task\MakeAsyncTask;
+use zOmArRD\core\task\NpcAsync;
 use zOmArRD\core\task\ServerSyncTask;
 use zOmArRD\core\utils\Npc;
 
@@ -79,7 +81,7 @@ class Extensions
     {
         $plugin = GreekNetwork::getInstance()->getServer()->getPluginManager();
 
-        foreach ([new WorldListener(), new PlayerListener(), new DataPacketListener(), new ItemListener(), new EntityListener()] as $ev) {
+        foreach ([new WorldListener(), new PlayerListener(GreekNetwork::getInstance()), new DataPacketListener(), new ItemListener(), new EntityListener()] as $ev) {
             $plugin->registerEvents($ev, GreekNetwork::getInstance());
         }
     }
@@ -88,8 +90,7 @@ class Extensions
     {
         $plugin = GreekNetwork::getInstance()->getScheduler();
 
-        $plugin->scheduleRepeatingTask(new ServersScheluder(), 60);
-        $plugin->scheduleRepeatingTask(new ServerSyncTask(), 200);
+        $plugin->scheduleRepeatingTask(new MakeAsyncTask(), 200);
     }
 
     function registerCommands(): void
@@ -140,6 +141,14 @@ class Extensions
     public static function Mysql(): Mysql
     {
         return new Mysql();
+    }
+
+    /**
+     * @return Proxy
+     */
+    public static function getProxy(): Proxy
+    {
+        return new Proxy();
     }
 
     /**

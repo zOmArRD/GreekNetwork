@@ -45,8 +45,8 @@ use pocketmine\plugin\Plugin;
 use pocketmine\Server;
 use zOmArRD\core\command\subcommand\CreateNpcSubCommand;
 use zOmArRD\core\command\subcommand\HelpSubCommand;
+use zOmArRD\core\command\subcommand\SubCommand;
 use zOmArRD\core\GreekNetwork;
-use zOmArRD\core\utils\PlayerUtils;
 
 class GreekCommand extends Command implements PluginIdentifiableCommand
 {
@@ -69,6 +69,7 @@ class GreekCommand extends Command implements PluginIdentifiableCommand
     public function registerSubCommands(){
         $this->subcommands["setnpc"] = new CreateNpcSubCommand();
         $this->subcommands["help"] = new HelpSubCommand();
+
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args) {

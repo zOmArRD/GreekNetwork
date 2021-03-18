@@ -126,12 +126,12 @@ class PlayerUtils
         $floating = Extensions::FloatingText();
 
         if ($player instanceof Player) {
-            $text1 = $floating->createText(new Vector3(-58.50, 93.5, 11.50));
-            $text2 = $floating->createText(new Vector3(-58.50, 93, 11.50));
-            $text3 = $floating->createText(new Vector3(-58.50, 92.80, 11.50));
-            $text4 = $floating->createText(new Vector3(-58.50, 92.50, 11.50));
-            $text5 = $floating->createText(new Vector3(-58.50, 92.10, 11.50));
-            $text6 = $floating->createText(new Vector3(-58.50, 91.80, 11.50));
+            $text1 = $floating->createText(new Vector3(0.50, 64.5, 6.50));
+            $text2 = $floating->createText(new Vector3(0.50, 64, 6.50));
+            $text3 = $floating->createText(new Vector3(0.50,63.80, 6.50));
+            $text4 = $floating->createText(new Vector3(0.50, 63.50, 6.50));
+            $text5 = $floating->createText(new Vector3(0.50, 63.10, 6.50));
+            $text6 = $floating->createText(new Vector3(0.50, 62.80, 6.50));
 
             $floating->sendText($text1, $player, "§l§6Greek §7| §r§aLobby");
             $floating->sendText($text2, $player, "§fWelcome §e" . $pn . " §rto §l§6Greek §8Network");
@@ -147,17 +147,24 @@ class PlayerUtils
         $floating = Extensions::FloatingText();
 
         if ($player instanceof Player) {
-            $text1 = $floating->createText(new Vector3(-45.50, 95.20, 11.50));
-            $text2 = $floating->createText(new Vector3(-45.50, 94.50, 11.50));
+            $text1 = $floating->createText(new Vector3(11.50, 61.20, 18.50));
+            $text2 = $floating->createText(new Vector3(11.50, 60.50, 18.50));
 
-            $text3 = $floating->createText(new Vector3(-46.50, 95.20, 4.50));
-            $text4 = $floating->createText(new Vector3(-46.50, 94.50, 4.50));
+            $text3 = $floating->createText(new Vector3(9.50, 61.20, 21.50));
+            $text4 = $floating->createText(new Vector3(9.50, 60.50, 21.50));
 
-            $floating->sendText($text1, $player, "§l§6Greek §7| §r§aHCF §7(NA)");
+
+            $text5 = $floating->createText(new Vector3(-8.50, 61.20, 21.50));
+            $text6 = $floating->createText(new Vector3(-8.50, 60.50, 21.50));
+
+            $floating->sendText($text1, $player, "§l§6Greek §7| §r§6SkyWars §7(NA)");
             $floating->sendText($text2, $player, "§dtap to join");
 
-            $floating->sendText($text3, $player, "§l§6Greek §7| §r§aPractice §7(NA/EU)");
+            $floating->sendText($text3, $player, "§l§6Greek §7| §r§aHCF §7(NA)");
             $floating->sendText($text4, $player, "§dtap to join");
+
+            $floating->sendText($text5, $player, "§l§6Greek §7| §r§cPractice §7(NA)");
+            $floating->sendText($text6, $player, "§dtap to join");
         }
     }
 }

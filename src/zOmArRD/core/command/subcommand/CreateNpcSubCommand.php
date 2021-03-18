@@ -4,10 +4,17 @@ declare(strict_types=1);
 namespace zOmArRD\core\command\subcommand;
 
 use pocketmine\command\CommandSender;
+use pocketmine\entity\Entity;
+use pocketmine\entity\Skin;
+use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\Server;
+use Throwable;
 use zOmArRD\core\addons\Extensions;
 use zOmArRD\core\config\Settings;
+use zOmArRD\core\GreekNetwork;
+use zOmArRD\core\utils\Npc;
 
 class CreateNpcSubCommand implements SubCommand
 {
@@ -39,15 +46,49 @@ class CreateNpcSubCommand implements SubCommand
         switch ($args[0]) {
             case "hcf":
             case "h":
-                $api->spawnEntity("hcf", $x, $y, $z, $sender->getLevel(), $sender);
+                try {
+                    $api->spawnEntity("hcf", $x, $y, $z, $sender->getLevel(), $sender);
+                } catch (Throwable $e) {
+                    $sender->sendMessage($e->getMessage());
+                }
                 break;
             case "practice":
             case "p":
-                $api->spawnEntity("practice", $x, $y, $z, $sender->getLevel(), $sender);
+                try {
+                    $api->spawnEntity("practice", $x, $y, $z, $sender->getLevel(), $sender);
+                } catch (Throwable $e) {
+                    $sender->sendMessage($e->getMessage());
+                }
                 break;
             case "skywars":
             case "sw":
+                try {
+                    $api->spawnEntity("skywars", $x, $y, $z, $sender->getLevel(), $sender);
+                } catch (Throwable $e) {
+                    $sender->sendMessage($e->getMessage());
+                }
                 $api->spawnEntity("skywars", $x, $y, $z, $sender->getLevel(), $sender);
+                break;
+            case "omar":
+                try {
+                    $api->spawnEntity("omar", $x, $y, $z, $sender->getLevel(), $sender);
+                } catch (Throwable $e) {
+                    $sender->sendMessage($e->getMessage());
+                }
+                break;
+            case "yuli":
+                try {
+                    $api->spawnEntity("yuli", $x, $y, $z, $sender->getLevel(), $sender);
+                } catch (Throwable $e) {
+                    $sender->sendMessage($e->getMessage());
+                }
+                break;
+            case "clear":
+                try {
+                    $api->purgeEntity($sender->getLevel());
+                } catch (Throwable $e) {
+                    $sender->sendMessage($e->getMessage());
+                }
                 break;
             default:
                 $sender->sendMessage(Settings::$prefix . "§cerror, npc not found!");
